@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 艺术创作 · 内部培训手册</title>
+<meta name="description" content="如何使用各大 AI 模型从事艺术创作：推理模型、图像模型、视频模型与 Agent 实操指南。">
+<style>
+  :root{
+    --bg:#0f1117; --bg-soft:#161922; --bg-card:#1b1f2a; --bg-card2:#20253200;
+    --line:#2a2f3d; --line-soft:#232838;
+    --text:#e8ebf2; --text-soft:#aab0c0; --text-dim:#7a8194;
+    --brand:#7c5cff; --brand-2:#22d3ee; --brand-3:#f472b6;
+    --ok:#34d399; --warn:#fbbf24; --bad:#f87171;
+    --radius:14px; --maxw:1080px;
+    --shadow:0 10px 40px rgba(0,0,0,.35);
+  }
+  [data-theme="light"]{
+    --bg:#f6f7fb; --bg-soft:#ffffff; --bg-card:#ffffff;
+    --line:#e4e7ef; --line-soft:#eef0f6;
+    --text:#1a1d27; --text-soft:#4a5063; --text-dim:#8b90a3;
+    --shadow:0 10px 30px rgba(20,25,50,.08);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;scroll-padding-top:80px}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    background:var(--bg);color:var(--text);line-height:1.7;
+    font-size:16px;-webkit-font-smoothing:antialiased;
+    transition:background .3s,color .3s;
+  }
+  a{color:var(--brand-2);text-decoration:none}
+  a:hover{text-decoration:underline}
+  code{font-family:"SF Mono",Menlo,Consolas,monospace;font-size:.88em;
+    background:var(--bg-soft);border:1px solid var(--line);border-radius:6px;padding:.1em .4em}
+
+  /* ===== Top bar ===== */
+  .topbar{
+    position:sticky;top:0;z-index:50;
+    background:color-mix(in srgb,var(--bg) 88%,transparent);
+    backdrop-filter:blur(12px);border-bottom:1px solid var(--line);
+  }
+  .topbar-inner{max-width:var(--maxw);margin:0 auto;padding:12px 20px;
+    display:flex;align-items:center;gap:16px}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.05rem}
+  .logo .dot{width:26px;height:26px;border-radius:8px;
+    background:linear-gradient(135deg,var(--brand),var(--brand-3));
+    display:grid;place-items:center;font-size:15px}
+  .topbar nav{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+  .topbar nav a{color:var(--text-soft);font-size:.9rem;padding:6px 11px;border-radius:8px}
+  .topbar nav a:hover{color:var(--text);background:var(--bg-soft);text-decoration:none}
+  .theme-btn{background:var(--bg-soft);border:1px solid var(--line);color:var(--text);
+    width:38px;height:38px;border-radius:10px;cursor:pointer;font-size:16px;flex:none}
+  .theme-btn:hover{border-color:var(--brand)}
+  .menu-btn{display:none}
+
+  /* ===== Hero ===== */
+  .hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line)}
+  .hero::before{content:"";position:absolute;inset:0;
+    background:
+      radial-gradient(600px 300px at 12% -10%,rgba(124,92,255,.28),transparent 60%),
+      radial-gradient(500px 280px at 90% 0%,rgba(34,211,238,.20),transparent 60%),
+      radial-gradient(500px 320px at 60% 120%,rgba(244,114,182,.16),transparent 60%);
+    pointer-events:none}
+  .hero-inner{max-width:var(--maxw);margin:0 auto;padding:64px 20px 56px;position:relative}
+  .badge{display:inline-flex;align-items:center;gap:8px;font-size:.82rem;color:var(--text-soft);
+    background:var(--bg-soft);border:1px solid var(--line);padding:6px 13px;border-radius:999px;margin-bottom:20px}
+  .badge .pulse{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 0 rgba(52,211,153,.6);animation:pulse 2s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(52,211,153,.5)}70%{box-shadow:0 0 0 8px rgba(52,211,153,0)}100%{box-shadow:0 0 0 0 rgba(52,211,153,0)}}
+  .hero h1{font-size:clamp(1.9rem,4.5vw,3rem);line-height:1.2;font-weight:800;letter-spacing:-.5px;margin-bottom:16px}
+  .hero h1 .grad{background:linear-gradient(120deg,var(--brand),var(--brand-2) 60%,var(--brand-3));
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero p{font-size:1.1rem;color:var(--text-soft);max-width:680px}
+  .hero-stats{display:flex;gap:28px;flex-wrap:wrap;margin-top:30px}
+  .hero-stats div{display:flex;flex-direction:column}
+  .hero-stats b{font-size:1.5rem;font-weight:800;
+    background:linear-gradient(120deg,var(--brand),var(--brand-2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero-stats span{font-size:.85rem;color:var(--text-dim)}
+
+  /* ===== Layout ===== */
+  .layout{max-width:var(--maxw);margin:0 auto;padding:0 20px;display:grid;
+    grid-template-columns:220px 1fr;gap:40px;align-items:start}
+  .sidebar{position:sticky;top:80px;padding:34px 0;align-self:start}
+  .sidebar h4{font-size:.72rem;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim);margin:18px 0 8px}
+  .sidebar a{display:block;color:var(--text-soft);font-size:.9rem;padding:6px 12px;border-radius:8px;border-left:2px solid transparent}
+  .sidebar a:hover{color:var(--text);background:var(--bg-soft);text-decoration:none}
+  .sidebar a.active{color:var(--text);border-left-color:var(--brand);background:var(--bg-soft)}
+  .content{padding:34px 0 80px;min-width:0}
+
+  section{margin-bottom:64px;scroll-margin-top:80px}
+  .sec-tag{font-size:.78rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--brand-2);margin-bottom:8px}
+  h2{font-size:1.7rem;font-weight:800;letter-spacing:-.3px;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+  h2 .ic{font-size:1.4rem}
+  .lead{color:var(--text-soft);margin-bottom:24px;font-size:1.02rem}
+  h3{font-size:1.15rem;font-weight:700;margin:26px 0 10px}
+  p{margin-bottom:12px;color:var(--text-soft)}
+  .content strong{color:var(--text)}
+  ul,ol{margin:0 0 14px 1.2em;color:var(--text-soft)}
+  li{margin-bottom:6px}
+
+  /* ===== Cards ===== */
+  .grid{display:grid;gap:16px}
+  .grid.c2{grid-template-columns:repeat(2,1fr)}
+  .grid.c3{grid-template-columns:repeat(3,1fr)}
+  .card{background:var(--bg-card);border:1px solid var(--line);border-radius:var(--radius);padding:20px;transition:transform .2s,border-color .2s}
+  .card:hover{transform:translateY(-3px);border-color:var(--brand)}
+  .card .top{display:flex;align-items:center;gap:11px;margin-bottom:10px}
+  .card .ico{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;font-size:20px;flex:none;
+    background:linear-gradient(135deg,rgba(124,92,255,.2),rgba(34,211,238,.15));border:1px solid var(--line)}
+  .card h4{font-size:1.02rem;font-weight:700}
+  .card .sub{font-size:.78rem;color:var(--text-dim)}
+  .card p{font-size:.92rem;margin-bottom:8px}
+  .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  .tag{font-size:.74rem;color:var(--text-soft);background:var(--bg-soft);border:1px solid var(--line);padding:3px 9px;border-radius:999px}
+  .tag.best{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 40%,var(--line))}
+
+  /* ===== Callouts ===== */
+  .note{border:1px solid var(--line);border-left:3px solid var(--brand);background:var(--bg-card);
+    border-radius:10px;padding:14px 16px;margin:18px 0;font-size:.92rem}
+  .note.tip{border-left-color:var(--ok)}
+  .note.warn{border-left-color:var(--warn)}
+  .note .h{font-weight:700;color:var(--text);display:flex;align-items:center;gap:7px;margin-bottom:4px}
+
+  /* ===== Tables ===== */
+  .table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);margin:18px 0}
+  table{width:100%;border-collapse:collapse;font-size:.9rem;min-width:560px}
+  th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+  th{background:var(--bg-soft);font-weight:700;color:var(--text);font-size:.82rem;text-transform:uppercase;letter-spacing:.5px}
+  tr:last-child td{border-bottom:none}
+  td b{color:var(--text)}
+  .pill{display:inline-block;font-size:.72rem;padding:2px 8px;border-radius:999px;font-weight:600}
+  .pill.g{background:rgba(52,211,153,.15);color:var(--ok)}
+  .pill.y{background:rgba(251,191,36,.15);color:var(--warn)}
+  .pill.r{background:rgba(248,113,113,.15);color:var(--bad)}
+
+  /* ===== Workflow steps ===== */
+  .flow{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:22px 0}
+  .flow .step{background:var(--bg-card);border:1px solid var(--line);border-radius:12px;padding:16px 14px;position:relative}
+  .flow .step .n{font-size:.74rem;font-weight:700;color:var(--brand-2);margin-bottom:6px}
+  .flow .step h4{font-size:.95rem;margin-bottom:5px}
+  .flow .step p{font-size:.82rem;margin:0}
+  .flow .step::after{content:"→";position:absolute;right:-9px;top:50%;transform:translateY(-50%);color:var(--text-dim);font-size:14px;z-index:1}
+  .flow .step:last-child::after{display:none}
+
+  /* ===== Prompt block ===== */
+  .prompt{background:var(--bg-soft);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:14px 0}
+  .prompt .bar{display:flex;align-items:center;gap:8px;padding:9px 14px;border-bottom:1px solid var(--line);font-size:.8rem;color:var(--text-dim)}
+  .prompt .bar .d{width:11px;height:11px;border-radius:50%}
+  .prompt .bar .d.r{background:#ff5f56}.prompt .bar .d.y{background:#ffbd2e}.prompt .bar .d.g{background:#27c93f}
+  .prompt pre{padding:14px 16px;overflow-x:auto;font-family:"SF Mono",Menlo,Consolas,monospace;font-size:.85rem;color:var(--text);line-height:1.6;white-space:pre-wrap;background:transparent;border:none}
+  .prompt pre .hl{color:var(--brand-2)}
+
+  /* ===== Misc ===== */
+  .divider{height:1px;background:var(--line);margin:48px 0}
+  footer{border-top:1px solid var(--line);padding:30px 20px;text-align:center;color:var(--text-dim);font-size:.85rem}
+  footer .top{max-width:var(--maxw);margin:0 auto}
+  .toc-chip{display:inline-flex;gap:8px;flex-wrap:wrap}
+  .anchor-h{scroll-margin-top:80px}
+  .back-top{position:fixed;right:22px;bottom:22px;width:44px;height:44px;border-radius:12px;
+    background:var(--brand);color:#fff;border:none;cursor:pointer;font-size:18px;opacity:0;transform:translateY(10px);
+    transition:opacity .3s,transform .3s;box-shadow:var(--shadow);z-index:40}
+  .back-top.show{opacity:1;transform:translateY(0)}
+
+  @media(max-width:900px){
+    .layout{grid-template-columns:1fr;gap:0}
+    .sidebar{display:none}
+    .grid.c2,.grid.c3{grid-template-columns:1fr}
+    .flow{grid-template-columns:1fr}
+    .flow .step::after{content:"↓";right:50%;top:auto;bottom:-9px;transform:translateX(50%)}
+    .topbar nav{display:none;position:absolute;top:62px;left:0;right:0;flex-direction:column;
+      background:var(--bg-soft);border-bottom:1px solid var(--line);padding:8px 14px}
+    .topbar nav.open{display:flex}
+    .menu-btn{display:grid;place-items:center;margin-left:auto;background:var(--bg-soft);
+      border:1px solid var(--line);color:var(--text);width:38px;height:38px;border-radius:10px;cursor:pointer;font-size:18px}
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== Top bar ===== -->
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="logo"><span class="dot">🎨</span> AI 艺术创作 · 培训手册</div>
+    <button class="menu-btn" id="menuBtn" aria-label="菜单">☰</button>
+    <nav id="topnav">
+      <a href="#intro">概览</a>
+      <a href="#workflow">创作流程</a>
+      <a href="#reasoning">推理模型</a>
+      <a href="#image">图像模型</a>
+      <a href="#video">视频模型</a>
+      <a href="#agent">Agent</a>
+      <a href="#prompt">提示词</a>
+      <a href="#ethics">合规</a>
+    </nav>
+    <button class="theme-btn" id="themeBtn" aria-label="切换主题">🌙</button>
+  </div>
+</header>
+
+<!-- ===== Hero ===== -->
+<div class="hero">
+  <div class="hero-inner">
+    <span class="badge"><span class="pulse"></span>内部培训 · v1.0 · 2026 更新</span>
+    <h1>用 <span class="grad">AI 模型</span> 从事艺术创作<br>从选型到落地的全流程手册</h1>
+    <p>本手册面向团队内部培训，系统讲解如何组合使用<strong>推理模型、图像模型、视频模型与各类 Agent</strong>，完成从创意构思、概念设计、成片制作到迭代优化的完整艺术创作链路。</p>
+    <div class="hero-stats">
+      <div><b>4</b><span>核心模型类别</span></div>
+      <div><b>20+</b><span>主流模型与工具</span></div>
+      <div><b>5</b><span>阶段创作流程</span></div>
+      <div><b>∞</b><span>可复用提示词模板</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Layout ===== -->
+<div class="layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h4>开始</h4>
+    <a href="#intro">课程概览</a>
+    <a href="#workflow">标准创作流程</a>
+    <h4>模型分类</h4>
+    <a href="#reasoning">推理 / 文本模型</a>
+    <a href="#image">图像生成模型</a>
+    <a href="#video">视频生成模型</a>
+    <a href="#agent">Agent 与自动化</a>
+    <h4>方法</h4>
+    <a href="#prompt">提示词工程</a>
+    <a href="#compare">选型对比</a>
+    <a href="#cases">实战案例</a>
+    <h4>规范</h4>
+    <a href="#ethics">版权与合规</a>
+    <a href="#resources">资源索引</a>
+  </aside>
+
+  <!-- Content -->
+  <main class="content">
+
+    <!-- 概览 -->
+    <section id="intro" class="anchor-h">
+      <div class="sec-tag">第 1 章 · 概览</div>
+      <h2><span class="ic">🧭</span>课程概览</h2>
+      <p class="lead">AI 不会取代艺术家，但<strong>会用 AI 的艺术家正在取代不会用的</strong>。本课程的目标是让每位同事都能把多种 AI 模型当作"协作工具链"来使用，而不是单点工具。</p>
+
+      <p>艺术创作不是"输入一句话出一张图"那么简单。一个成熟的 AI 创作流程，通常会让<strong>不同类型的模型各司其职</strong>：</p>
+      <div class="grid c2">
+        <div class="card">
+          <div class="top"><div class="ico">🧠</div><div><h4>推理 / 文本模型</h4><div class="sub">负责"想"</div></div></div>
+          <p>创意发散、概念设定、世界观构建、脚本与分镜、提示词撰写与优化。是整个流程的"大脑"。</p>
+        </div>
+        <div class="card">
+          <div class="top"><div class="ico">🖼️</div><div><h4>图像模型</h4><div class="sub">负责"画"</div></div></div>
+          <p>概念图、角色设定、场景插画、海报、材质贴图。从草稿到成品的视觉主力。</p>
+        </div>
+        <div class="card">
+          <div class="top"><div class="ico">🎬</div><div><h4>视频模型</h4><div class="sub">负责"动"</div></div></div>
+          <p>动态分镜、短片、广告、概念预告。把静态创意变成有时间维度的影像。</p>
+        </div>
+        <div class="card">
+          <div class="top"><div class="ico">🤖</div><div><h4>Agent</h4><div class="sub">负责"串"</div></div></div>
+          <p>把多个模型与工具自动编排起来，处理批量任务、调用工具、执行多步骤工作流。</p>
+        </div>
+      </div>
+
+      <div class="note tip">
+        <div class="h">💡 核心理念</div>
+        把每个模型理解为团队里不同工种的"同事"：推理模型是创意总监，图像模型是美术，视频模型是导演，Agent 是制片助理。你的角色是<strong>艺术指导（Art Director）</strong>——定方向、提要求、做取舍。
+      </div>
+    </section>
+
+    <!-- 创作流程 -->
+    <section id="workflow" class="anchor-h">
+      <div class="sec-tag">第 2 章 · 流程</div>
+      <h2><span class="ic">🔄</span>标准创作流程</h2>
+      <p class="lead">推荐的五阶段流程，适用于绝大多数艺术创作项目（插画、概念设计、短片、品牌视觉等）。</p>
+
+      <div class="flow">
+        <div class="step"><div class="n">STEP 1</div><h4>构思 / Ideation</h4><p>用推理模型发散创意、确定风格与世界观。</p></div>
+        <div class="step"><div class="n">STEP 2</div><h4>提示词工程</h4><p>把创意翻译成结构化、可复用的提示词。</p></div>
+        <div class="step"><div class="n">STEP 3</div><h4>图像生成</h4><p>出概念图、设定图，反复迭代锁定视觉。</p></div>
+        <div class="step"><div class="n">STEP 4</div><h4>动态化</h4><p>用视频模型让关键画面动起来。</p></div>
+        <div class="step"><div class="n">STEP 5</div><h4>合成 / 交付</h4><p>后期剪辑、调色、放大、Agent 批处理。</p></div>
+      </div>
+
+      <h3>每个阶段该用哪类模型？</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>阶段</th><th>主要任务</th><th>推荐模型类别</th><th>典型工具</th></tr></thead>
+          <tbody>
+            <tr><td><b>1. 构思</b></td><td>头脑风暴、风格定位、剧本/分镜</td><td>推理 / 文本模型</td><td>GPT-5、Claude Opus 4.x、Gemini</td></tr>
+            <tr><td><b>2. 提示词</b></td><td>结构化提示、多语言、风格关键词</td><td>推理模型 + 提示词库</td><td>Claude、GPT，配合参考图</td></tr>
+            <tr><td><b>3. 图像</b></td><td>概念图、设定、海报、贴图</td><td>图像模型</td><td>Midjourney、Flux、Nano Banana、SD</td></tr>
+            <tr><td><b>4. 视频</b></td><td>动态镜头、转场、短片</td><td>视频模型</td><td>Sora、Veo、Runway、Kling</td></tr>
+            <tr><td><b>5. 交付</b></td><td>放大、调色、批量、合成</td><td>Agent + 专用工具</td><td>ComfyUI、Topaz、剪辑软件</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="note">
+        <div class="h">🔁 关键：迭代而非一次成型</div>
+        真正的产出质量来自<strong>循环</strong>——生成 → 评估 → 调整提示词 → 再生成。把前一轮的结果（图/帧）作为下一轮的参考输入（图生图、首尾帧），是专业流程与业余流程最大的差别。
+      </div>
+    </section>
+
+    <!-- 推理模型 -->
+    <section id="reasoning" class="anchor-h">
+      <div class="sec-tag">第 3 章 · 模型</div>
+      <h2><span class="ic">🧠</span>推理 / 文本模型</h2>
+      <p class="lead">在艺术创作中，文本/推理模型并不直接出图，但它决定了你的创意上限。它负责：创意发散、世界观、剧本、分镜、以及最关键的——<strong>把模糊想法翻译成精确提示词</strong>。</p>
+
+      <div class="grid c2">
+        <div class="card">
+          <div class="top"><div class="ico">🟢</div><div><h4>OpenAI GPT-5 / o 系列</h4><div class="sub">通用 + 深度推理</div></div></div>
+          <p>综合能力强，多模态（可读图），适合创意发散、剧本写作、提示词生成。o 系列推理模型擅长复杂的多步骤构思。</p>
+          <div class="tags"><span class="tag best">创意发散</span><span class="tag">读图</span><span class="tag">剧本</span></div>
+        </div>
+        <div class="card">
+          <div class="top"><div class="ico">🟣</div><div><h4>Anthropic Claude Opus 4.x</h4><div class="sub">长文本 + 结构化</div></div></div>
+          <p>长上下文、文风细腻、结构化输出稳定，特别适合撰写复杂提示词模板、世界观设定文档、严谨的分镜脚本。</p>
+          <div class="tags"><span class="tag best">提示词工程</span><span class="tag">世界观</span><span class="tag">长文档</span></div>
+        </div>
+        <div class="card">
+          <div class="top"><div class="ico">🔵</div><div><h4>Google Gemini</h4><div class="sub">原生多模态</div></div></div>
+          <p>原生多模态、超长上下文，能同时处理大量参考图与文本，适合做风格分析和视觉参考整理。</p>
+          <div class="tags"><span class="tag">多模态</span><span class="tag">风格分析</span></div>
+        </div>
+        <div class="card">
+          <div class="top"><div class="ico">⚫</div><div><h4>DeepSeek-R1 / 其他开源</h4><div class="sub">可私有部署</div></div></div>
+          <p>开源推理模型，可本地/私有部署，适合对数据保密有要求或需要大批量低成本调用的场景。</p>
+          <div class="tags"><span class="tag">私有部署</span><span class="tag">低成本</span></div>
+        </div>
+      </div>
+
+      <h3>在创作中怎么用？三个高频场景</h3>
+      <ol>
+        <li><strong>创意发散：</strong>"我想做一个赛博朋克 + 敦煌壁画融合的系列插画，给我 10 个差异化的视觉方向，每个附一句话氛围描述。"</li>
+        <li><strong>提示词生成：</strong>把模糊想法交给模型，让它产出结构化、可直接喂给 Midjourney/Flux 的英文提示词。</li>
+        <li><strong>分镜脚本：</strong>"把这个 30 秒广告拆成 6 个镜头，每个镜头给出画面描述、镜头运动、时长。"</li>
+      </ol>
+
+      <div class="prompt">
+        <div class="bar"><span class="d r"></span><span class="d y"></span><span class="d g"></span><span style="margin-left:6px">让推理模型当"提示词工程师"</span></div>
+<pre><span class="hl">角色：</span>你是资深 AI 艺术提示词工程师。
+<span class="hl">任务：</span>把我的创意转成 Midjourney v7 英文提示词。
+<span class="hl">我的创意：</span>一只穿宇航服的猫，孤独地站在火星沙丘上看地球升起，电影感。
+<span class="hl">输出要求：</span>
+1. 主体 + 环境 + 光线 + 镜头 + 风格，逗号分隔
+2. 给出 3 个风格变体（写实/插画/极简）
+3. 附 --ar 16:9 等参数建议</pre>
+      </div>
+
+      <div class="note tip">
+        <div class="h">💡 实操技巧</div>
+        让推理模型生成提示词时，<strong>明确告诉它目标模型</strong>（Midjourney / Flux / Sora 的提示词语法差异很大）。并要求它输出英文——绝大多数图像/视频模型对英文提示词的理解优于中文。
+      </div>
+    </section>
+
+    <!-- 图像模型 -->
+    <section id="image" class="anchor-h">
+      <div class="sec-tag">第 4 章 · 模型</div>
+      <h2><span class="ic">🖼️</span>图像生成模型</h2>
+      <p class="lead">图像模型是艺术创作的视觉主力。不同模型在"美学风格、可控性、文字渲染、本地部署"上各有所长，需要按任务选型。</p>
+
+      <div class="grid c2">
+        <div class="card">
+          <div class="top"><div class="ico">🎨</div><div><h4>Midjourney v7</h4><div class="sub">美学天花板</div></div></div>
+          <p>默认出图美感极强，适合概念图、海报、氛围图。风格化、光影、构图开箱即用。可控性中等，需配合 sref/cref 等参数。</p>
+          <div class="tags"><span class="tag best">美学</span><span class="tag">概念图</span><span class="tag">海报</span></div>
+        </div>
+        <div class="card">
+          <div class="top"><div class="ico">⚡</div><div><h4>Flux (Black Forest Labs)</h4><div class="sub">质量 + 可控</div></div></div>
+          <p>开源/商用兼具，提示词遵循度高、文字渲染好，可本地部署并训练 LoRA。专业可控流程的首选之一。</p>
+          <div class="tags"><span class="tag best">可控</span><span class="tag">文字渲染</span><span class="tag">可微调</span></div>
+        </div>
+        <div class="card">
+          <div class="top"><div class="ico">🍌</div><div><h4>Gemini 图像 (Nano Banana)</h4><div class="sub">对话式编辑</div></div></div>
+          <p>Google 的图像生成/编辑模型，强项是<strong>自然语言局部修改</strong>与多图融合——"把背景换成黄昏""保持人物不变换个姿势"非常顺手。</p>
+          <div class="tags"><span class="tag best">局部编辑</span><span class="tag">多图融合</span></div>
+        </div>
+        <div class="card">
+          <div class="top"><div class="ico">🟢</div><div><h4>GPT 图像生成 (DALL·E 系)</h4><div class="sub">对话 + 理解力</div></div></div>
+          <p>与对话深度结合，能理解复杂语义和构图指令，文字渲染好。适合需要"边聊边改"和强语义的场景。</p>
+          <div class="tags"><span class="tag">语义强</span><span class="tag">文字</span><span class="tag">易用</span></div>
+        </div>
+        <div class="card">
+          <div class="top"><div class="ico">🧩</div><div><h4>Stable Diffusion / SDXL</h4><div class="sub">开源生态王</div></div></div>
+          <p>开源、可完全本地部署，配合 ComfyUI、ControlNet、LoRA 实现像素级可控。生态最丰富，是专业可控流程的基石。</p>
+          <div class="tags"><span class="tag best">完全可控</span><span class="tag">本地</span><span class="tag">ControlNet</span></div>
+        </div>
+        <div class="card">
+          <div class="top"><div class="ico">✒️</div><div><h4>Ideogram / Recraft</h4><div class="sub">文字 + 设计</div></div></div>
+          <p>在<strong>文字渲染、Logo、矢量、平面设计</strong>类任务上表现突出，适合需要排版和品牌元素的商业设计。</p>
+          <div class="tags"><span class="tag best">文字排版</span><span class="tag">Logo</span><span class="tag">矢量</span></div>
+        </div>
+      </div>
+
+      <h3>关键能力对比</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>模型</th><th>开箱美学</th><th>可控性</th><th>文字渲染</th><th>本地部署</th><th>最适合</th></tr></thead>
+          <tbody>
+            <tr><td><b>Midjourney v7</b></td><td><span class="pill g">极高</span></td><td><span class="pill y">中</span></td><td><span class="pill y">中</span></td><td><span class="pill r">否</span></td><td>概念图 / 海报 / 氛围</td></tr>
+            <tr><td><b>Flux</b></td><td><span class="pill g">高</span></td><td><span class="pill g">高</span></td><td><span class="pill g">好</span></td><td><span class="pill g">是</span></td><td>专业可控 / 商用</td></tr>
+            <tr><td><b>Nano Banana</b></td><td><span class="pill g">高</span></td><td><span class="pill g">高</span></td><td><span class="pill g">好</span></td><td><span class="pill r">否</span></td><td>局部编辑 / 改图</td></tr>
+            <tr><td><b>SD / SDXL</b></td><td><span class="pill y">中</span></td><td><span class="pill g">极高</span></td><td><span class="pill y">中</span></td><td><span class="pill g">是</span></td><td>像素级可控流程</td></tr>
+            <tr><td><b>Ideogram</b></td><td><span class="pill g">高</span></td><td><span class="pill y">中</span></td><td><span class="pill g">极好</span></td><td><span class="pill r">否</span></td><td>文字 / Logo / 平面</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="note">
+        <div class="h">🎯 选型口诀</div>
+        <strong>要美感、出概念</strong> → Midjourney；<strong>要可控、要商用、要微调</strong> → Flux / SD；<strong>要改图、局部编辑</strong> → Nano Banana / GPT 图像；<strong>要文字和排版</strong> → Ideogram / Recraft。
+      </div>
+
+      <h3>图像提示词结构（通用公式）</h3>
+      <div class="prompt">
+        <div class="bar"><span class="d r"></span><span class="d y"></span><span class="d g"></span><span style="margin-left:6px">通用图像提示词模板</span></div>
+<pre><span class="hl">[主体]</span> + <span class="hl">[动作/姿态]</span> + <span class="hl">[环境/背景]</span> +
+<span class="hl">[光线]</span> + <span class="hl">[镜头/视角]</span> + <span class="hl">[风格/艺术家参考]</span> +
+<span class="hl">[画质词]</span> + <span class="hl">[参数 --ar --style 等]</span>
+
+示例：
+A lone astronaut cat, standing on a red Mars dune,
+looking at Earth rising on the horizon,
+golden hour rim light, cinematic wide shot,
+in the style of Studio Ghibli concept art,
+highly detailed, 8k --ar 16:9 --style raw</pre>
+      </div>
+    </section>
+
+    <!-- 视频模型 -->
+    <section id="video" class="anchor-h">
+      <div class="sec-tag">第 5 章 · 模型</div>
+      <h2><span class="ic">🎬</span>视频生成模型</h2>
+      <p class="lead">视频模型把静态创意变成有时间维度的影像。核心玩法有三种：<strong>文生视频、图生视频（让一张图动起来）、首尾帧控制</strong>。</p>
+
+      <div class="grid c2">
+        <div class="card">
+          <div class="top"><div class="ico">🟢</div><div><h4>OpenAI Sora</h4><div class="sub">叙事 + 物理</div></div></div>
+          <p>长时长、镜头连贯性与物理真实感强，适合有叙事的短片、复杂运动场景。支持图生视频与混剪。</p>
+          <div class="tags"><span class="tag best">叙事短片</span><span class="tag">物理真实</span></div>
+        </div>
+        <div class="card">
+          <div class="top"><div class="ico">🔵</div><div><h4>Google Veo</h4><div class="sub">画质 + 原生音频</div></div></div>
+          <p>电影级画质，可<strong>原生生成同步音效与对白</strong>，提示词遵循度高。适合广告级、写实向成片。</p>
+          <div class="tags"><span class="tag best">原生音频</span><span class="tag">电影画质</span></div>
+        </div>
+        <div class="card">
+          <div class="top"><div class="ico">🟠</div><div><h4>Runway Gen-4</h4><div class="sub">创作者工具链</div></div></div>
+          <p>面向专业创作者，工具最全：运动笔刷、相机控制、角色一致性、视频编辑。适合精细化可控创作。</p>
+          <div class="tags"><span class="tag best">精细控制</span><span class="tag">角色一致</span></div>
+        </div>
+        <div class="card">
+          <div class="top"><div class="ico">🔴</div><div><h4>快手 Kling / 可灵</h4><div class="sub">国产强者</div></div></div>
+          <p>运动幅度大、人物表现好，首尾帧控制实用，性价比高。中文场景与本地化需求友好。</p>
+          <div class="tags"><span class="tag">首尾帧</span><span class="tag">性价比</span></div>
+        </div>
+        <div class="card">
+          <div class="top"><div class="ico">🟣</div><div><h4>Pika / Luma / Hailuo</h4><div class="sub">轻量快速</div></div></div>
+          <p>生成快、易上手，适合快速出概念动态、社媒短内容、创意验证。Luma 的图生视频流畅自然。</p>
+          <div class="tags"><span class="tag">快速</span><span class="tag">易用</span><span class="tag">社媒</span></div>
+        </div>
+        <div class="card">
+          <div class="top"><div class="ico">🎞️</div><div><h4>图生视频（通用玩法）</h4><div class="sub">最稳的工作流</div></div></div>
+          <p>先用图像模型把<strong>关键帧画到满意</strong>，再喂给视频模型做动态。可控性远高于纯文生视频，是专业首选路径。</p>
+          <div class="tags"><span class="tag best">推荐流程</span><span class="tag">高可控</span></div>
+        </div>
+      </div>
+
+      <h3>视频模型对比</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>模型</th><th>画质</th><th>时长/连贯</th><th>音频</th><th>可控性</th><th>最适合</th></tr></thead>
+          <tbody>
+            <tr><td><b>Sora</b></td><td><span class="pill g">高</span></td><td><span class="pill g">强</span></td><td><span class="pill y">部分</span></td><td><span class="pill y">中</span></td><td>叙事短片</td></tr>
+            <tr><td><b>Veo</b></td><td><span class="pill g">极高</span></td><td><span class="pill g">强</span></td><td><span class="pill g">原生</span></td><td><span class="pill g">高</span></td><td>广告 / 写实成片</td></tr>
+            <tr><td><b>Runway Gen-4</b></td><td><span class="pill g">高</span></td><td><span class="pill y">中</span></td><td><span class="pill y">部分</span></td><td><span class="pill g">极高</span></td><td>精细可控创作</td></tr>
+            <tr><td><b>Kling</b></td><td><span class="pill g">高</span></td><td><span class="pill g">强</span></td><td><span class="pill y">部分</span></td><td><span class="pill g">高</span></td><td>人物 / 性价比</td></tr>
+            <tr><td><b>Pika/Luma</b></td><td><span class="pill y">中</span></td><td><span class="pill y">中</span></td><td><span class="pill r">弱</span></td><td><span class="pill y">中</span></td><td>快速概念验证</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="note warn">
+        <div class="h">⚠️ 视频创作的现实预期</div>
+        视频模型仍有局限：长镜头一致性、手部与文字、复杂物理交互容易出错。<strong>专业做法是"分镜化"</strong>——把短片拆成多个 3–5 秒镜头分别生成，再用剪辑软件拼接，而不是指望一次生成完整长片。
+      </div>
+
+      <div class="prompt">
+        <div class="bar"><span class="d r"></span><span class="d y"></span><span class="d g"></span><span style="margin-left:6px">视频提示词模板（含镜头语言）</span></div>
+<pre><span class="hl">[场景/主体]</span>：宇航服猫站在火星沙丘上
+<span class="hl">[动作]</span>：缓缓抬头望向地平线上升起的地球
+<span class="hl">[镜头运动]</span>：缓慢推进 (slow dolly-in)，最后定格特写
+<span class="hl">[氛围/光线]</span>：黄昏暖光，电影感，颗粒质感
+<span class="hl">[时长/比例]</span>：5s，16:9
+（图生视频时，先放入已确定的关键帧图片）</pre>
+      </div>
+    </section>
+
+    <!-- Agent -->
+    <section id="agent" class="anchor-h">
+      <div class="sec-tag">第 6 章 · 模型</div>
+      <h2><span class="ic">🤖</span>Agent 与自动化</h2>
+      <p class="lead">Agent 是能"自己调用工具、执行多步骤任务"的 AI。在艺术创作里，它把分散的模型与工具<strong>编排成自动化流水线</strong>，解放重复劳动。</p>
+
+      <div class="grid c2">
+        <div class="card">
+          <div class="top"><div class="ico">💬</div><div><h4>对话式 Agent（ChatGPT / Claude / Gemini）</h4><div class="sub">通用助手</div></div></div>
+          <p>内置联网、读图、生图、代码执行等能力。可作为创作"指挥中心"：一边聊创意，一边出图、改图、写脚本。</p>
+          <div class="tags"><span class="tag">指挥中心</span><span class="tag">多工具</span></div>
+        </div>
+        <div class="card">
+          <div class="top"><div class="ico">🧱</div><div><h4>ComfyUI 工作流</h4><div class="sub">可视化节点编排</div></div></div>
+          <p>艺术创作领域最强的开源自动化工具。把"生图→放大→换脸→生视频"做成节点工作流，一键批量执行，可复用、可分享。</p>
+          <div class="tags"><span class="tag best">批量自动化</span><span class="tag">可复用</span></div>
+        </div>
+        <div class="card">
+          <div class="top"><div class="ico">🛠️</div><div><h4>通用任务 Agent（Manus 等）</h4><div class="sub">自主多步骤</div></div></div>
+          <p>能自主规划并执行多步骤任务：搜集参考、整理 moodboard、批量调用生成 API、产出交付包。适合复杂项目的"制片助理"。</p>
+          <div class="tags"><span class="tag">自主规划</span><span class="tag">多步骤</span></div>
+        </div>
+        <div class="card">
+          <div class="top"><div class="ico">🔌</div><div><h4>API + 脚本 / MCP</h4><div class="sub">深度定制</div></div></div>
+          <p>有开发能力时，可用各模型 API 自建批量生成、自动评分筛选、风格一致性校验等定制流水线，对接公司内部系统。</p>
+          <div class="tags"><span class="tag">深度定制</span><span class="tag">可集成</span></div>
+        </div>
+      </div>
+
+      <h3>Agent 适合接管哪些工作？</h3>
+      <ul>
+        <li><strong>批量生成：</strong>同一提示词模板批量产出 100 张备选图，自动筛选高分项。</li>
+        <li><strong>风格统一：</strong>对一批图统一套用 LoRA / 风格参考，保证系列一致性。</li>
+        <li><strong>多步流水线：</strong>生图 → 高清放大 → 抠图 → 合成 → 转视频，全自动串联。</li>
+        <li><strong>资料整理：</strong>自动搜集参考图、生成 moodboard、整理提示词库。</li>
+      </ul>
+
+      <div class="note tip">
+        <div class="h">💡 入门建议</div>
+        团队成员先从<strong>对话式 Agent</strong>（ChatGPT / Claude）上手，熟悉"对话即创作"。需要批量与精细控制时，再投入学习 <strong>ComfyUI</strong>——它是当前 AI 美术工业化流程的事实标准。
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- 提示词工程 -->
+    <section id="prompt" class="anchor-h">
+      <div class="sec-tag">第 7 章 · 方法</div>
+      <h2><span class="ic">✍️</span>提示词工程</h2>
+      <p class="lead">提示词是人与模型之间的"通用语言"。掌握提示词工程，是从"开盲盒"到"精准创作"的分水岭。</p>
+
+      <div class="grid c2">
+        <div class="card">
+          <div class="top"><div class="ico">1️⃣</div><div><h4>结构化优于堆词</h4></div></div>
+          <p>按"主体→环境→光线→镜头→风格→参数"的固定结构组织，比随意堆砌关键词更稳定可控。</p>
+        </div>
+        <div class="card">
+          <div class="top"><div class="ico">2️⃣</div><div><h4>具体优于抽象</h4></div></div>
+          <p>"暖色调"不如"黄昏 4500K 暖光，长投影"；"好看"不如指定具体的艺术家、流派或参考。</p>
+        </div>
+        <div class="card">
+          <div class="top"><div class="ico">3️⃣</div><div><h4>善用参考图</h4></div></div>
+          <p>图生图、风格参考（sref）、角色参考（cref）比纯文字更能锁定你要的结果。一图胜千词。</p>
+        </div>
+        <div class="card">
+          <div class="top"><div class="ico">4️⃣</div><div><h4>负面提示词</h4></div></div>
+          <p>在 SD/Flux 中明确排除不想要的元素（多手指、低质、水印），显著提升出图可用率。</p>
+        </div>
+      </div>
+
+      <h3>提示词要素清单</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>要素</th><th>作用</th><th>示例词</th></tr></thead>
+          <tbody>
+            <tr><td><b>主体</b></td><td>画面核心是什么</td><td>a young woman, ancient dragon, neon city</td></tr>
+            <tr><td><b>风格</b></td><td>美学方向</td><td>oil painting, anime, photorealistic, cyberpunk</td></tr>
+            <tr><td><b>光线</b></td><td>氛围决定项</td><td>golden hour, rim light, soft studio light</td></tr>
+            <tr><td><b>镜头</b></td><td>视角与构图</td><td>wide shot, close-up, low angle, 85mm</td></tr>
+            <tr><td><b>画质</b></td><td>细节与质感</td><td>highly detailed, 8k, film grain</td></tr>
+            <tr><td><b>参数</b></td><td>技术控制</td><td>--ar 16:9 --style raw --chaos 20</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="note">
+        <div class="h">🔧 黄金工作法：让推理模型写提示词</div>
+        不会写英文提示词？没关系。把你的中文创意 + 目标模型告诉 GPT / Claude，让它产出结构化英文提示词，再粘贴到图像/视频模型里。<strong>这是性价比最高的协作模式。</strong>
+      </div>
+    </section>
+
+    <!-- 选型对比 -->
+    <section id="compare" class="anchor-h">
+      <div class="sec-tag">第 8 章 · 方法</div>
+      <h2><span class="ic">⚖️</span>选型速查</h2>
+      <p class="lead">不知道该用哪个模型？按"我要做什么"直接查表。</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>我想做……</th><th>首选</th><th>备选</th></tr></thead>
+          <tbody>
+            <tr><td>头脑风暴 / 写剧本分镜</td><td><b>GPT-5 / Claude Opus</b></td><td>Gemini</td></tr>
+            <tr><td>出有美感的概念图 / 海报</td><td><b>Midjourney v7</b></td><td>Flux、GPT 图像</td></tr>
+            <tr><td>要精确可控 / 商用可微调</td><td><b>Flux / Stable Diffusion</b></td><td>ComfyUI 工作流</td></tr>
+            <tr><td>改图 / 局部编辑 / 换背景</td><td><b>Nano Banana</b></td><td>GPT 图像、SD inpaint</td></tr>
+            <tr><td>带文字的设计 / Logo</td><td><b>Ideogram / Recraft</b></td><td>GPT 图像</td></tr>
+            <tr><td>叙事短片 / 复杂运动</td><td><b>Sora</b></td><td>Veo、Kling</td></tr>
+            <tr><td>广告级写实 + 声音</td><td><b>Veo</b></td><td>Sora</td></tr>
+            <tr><td>精细镜头控制 / 角色一致</td><td><b>Runway Gen-4</b></td><td>Kling</td></tr>
+            <tr><td>让一张图动起来</td><td><b>Kling / Luma</b></td><td>Runway、Pika</td></tr>
+            <tr><td>批量生成 / 自动化流水线</td><td><b>ComfyUI</b></td><td>API 脚本、任务 Agent</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 实战案例 -->
+    <section id="cases" class="anchor-h">
+      <div class="sec-tag">第 9 章 · 实战</div>
+      <h2><span class="ic">🎯</span>实战案例：一条 15 秒品牌概念短片</h2>
+      <p class="lead">把前面的知识串起来，走一遍完整流程。目标：为一款虚拟饮品做 15 秒概念短片。</p>
+
+      <div class="grid c2">
+        <div class="card">
+          <div class="top"><div class="ico">①</div><div><h4>构思（推理模型）</h4></div></div>
+          <p>用 Claude/GPT 确定调性："未来感 + 自然清新"，产出 3 个分镜脚本，选定一个：产品从星空中坠落→落入森林溪流→特写溅起水花。</p>
+        </div>
+        <div class="card">
+          <div class="top"><div class="ico">②</div><div><h4>提示词（推理模型）</h4></div></div>
+          <p>让模型为 3 个关键镜头各写一版英文图像提示词 + 视频运动描述，统一风格关键词保证一致性。</p>
+        </div>
+        <div class="card">
+          <div class="top"><div class="ico">③</div><div><h4>关键帧（图像模型）</h4></div></div>
+          <p>用 Midjourney/Flux 出 3 张关键帧，反复迭代到满意。用 sref 锁定统一视觉风格。</p>
+        </div>
+        <div class="card">
+          <div class="top"><div class="ico">④</div><div><h4>动态化（视频模型）</h4></div></div>
+          <p>把 3 张关键帧分别用 Kling/Runway 做图生视频，各 5 秒，指定镜头运动。Veo 补一段带音效的镜头。</p>
+        </div>
+        <div class="card">
+          <div class="top"><div class="ico">⑤</div><div><h4>合成交付</h4></div></div>
+          <p>剪辑软件拼接 3 段，加转场、配乐、字幕。必要时用 Topaz 放大到 4K。导出交付。</p>
+        </div>
+        <div class="card">
+          <div class="top"><div class="ico">⑥</div><div><h4>批量变体（Agent）</h4></div></div>
+          <p>用 ComfyUI 工作流批量产出不同配色/比例版本（竖版社媒、横版投放），一次成型多平台素材。</p>
+        </div>
+      </div>
+
+      <div class="note tip">
+        <div class="h">⏱️ 效率对比</div>
+        传统流程：脚本 + 拍摄 + 后期，数天到数周、数万预算。AI 流程：<strong>一名熟练创作者半天到一天</strong>即可产出可用的概念片，成本骤降——这正是培训的价值所在。
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- 合规 -->
+    <section id="ethics" class="anchor-h">
+      <div class="sec-tag">第 10 章 · 规范</div>
+      <h2><span class="ic">⚖️</span>版权与合规（必读）</h2>
+      <p class="lead">AI 创作能力越强，越要守住合规底线。以下是团队必须遵守的红线与建议。</p>
+
+      <div class="note warn">
+        <div class="h">🚫 红线</div>
+        <ul style="margin-bottom:0">
+          <li><strong>不得</strong>直接模仿在世艺术家的署名风格用于商业牟利（"in the style of [在世艺术家]"用于商用有侵权风险）。</li>
+          <li><strong>不得</strong>生成、传播可能侵犯他人肖像权的真实人物形象（尤其是公众人物 / 同事）。</li>
+          <li><strong>不得</strong>将公司机密、未公开素材上传到不可控的第三方模型；敏感项目优先用私有部署模型。</li>
+          <li><strong>不得</strong>生成违法、暴力、色情或误导性内容。</li>
+        </ul>
+      </div>
+
+      <div class="grid c2">
+        <div class="card">
+          <div class="top"><div class="ico">📜</div><div><h4>了解授权条款</h4></div></div>
+          <p>不同模型的商用授权差异很大。商用前确认所用模型/平台<strong>允许商业用途</strong>，并保留订阅/授权凭证。</p>
+        </div>
+        <div class="card">
+          <div class="top"><div class="ico">🏷️</div><div><h4>标注与溯源</h4></div></div>
+          <p>对外交付时按平台/客户要求标注"AI 生成"。保留提示词、版本记录，便于追溯与复现。</p>
+        </div>
+        <div class="card">
+          <div class="top"><div class="ico">🔒</div><div><h4>数据安全</h4></div></div>
+          <p>涉密素材使用私有/本地模型；关闭第三方平台的"训练数据收集"选项（如有）。</p>
+        </div>
+        <div class="card">
+          <div class="top"><div class="ico">👤</div><div><h4>人在回路</h4></div></div>
+          <p>AI 是工具，最终质量与责任由人把关。所有对外产出需经人工审核后发布。</p>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="h">ℹ️ 关于"AI 生成内容能否受版权保护"</div>
+        各国/地区法规仍在演变，且对"人类创造性贡献程度"要求不一。涉及重要商业版权时，请咨询法务，不要仅凭本手册判断。
+      </div>
+    </section>
+
+    <!-- 资源 -->
+    <section id="resources" class="anchor-h">
+      <div class="sec-tag">附录</div>
+      <h2><span class="ic">📚</span>资源索引</h2>
+      <p class="lead">持续学习清单与内部约定。</p>
+
+      <div class="grid c2">
+        <div class="card">
+          <div class="top"><div class="ico">🔖</div><div><h4>提示词与灵感</h4></div></div>
+          <ul style="margin-bottom:0">
+            <li>各模型官方文档与提示词指南</li>
+            <li>团队内部共享提示词库（持续维护）</li>
+            <li>moodboard / 风格参考归档</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="top"><div class="ico">🧰</div><div><h4>工具清单</h4></div></div>
+          <ul style="margin-bottom:0">
+            <li>图像：Midjourney、Flux、SD/ComfyUI、Nano Banana</li>
+            <li>视频：Sora、Veo、Runway、Kling</li>
+            <li>后期：Topaz（放大）、剪辑/调色软件</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="h">⏳ 重要提醒：模型迭代极快</div>
+        AI 模型版本与能力<strong>每隔数月就会大幅更新</strong>。本手册中的具体模型名称与排名仅代表 2026 年初的情况，请以各平台最新版本为准，并定期更新本手册。方法论（流程、提示词工程、选型思路）比具体模型更长青。
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<button class="back-top" id="backTop" aria-label="返回顶部">↑</button>
+
+<footer>
+  <div class="top">
+    <p>🎨 <strong>AI 艺术创作 · 内部培训手册</strong> · v1.0 · 仅供内部学习使用</p>
+    <p style="margin-top:6px;color:var(--text-dim)">方法论长青，模型常新 · 请定期更新具体模型信息</p>
+  </div>
+</footer>
+
+<script>
+  // Theme toggle
+  const themeBtn=document.getElementById('themeBtn');
+  const saved=localStorage.getItem('ai-art-theme');
+  if(saved){document.documentElement.setAttribute('data-theme',saved);themeBtn.textContent=saved==='light'?'☀️':'🌙';}
+  themeBtn.addEventListener('click',()=>{
+    const cur=document.documentElement.getAttribute('data-theme')==='light'?'':'light';
+    if(cur)document.documentElement.setAttribute('data-theme','light');
+    else document.documentElement.removeAttribute('data-theme');
+    themeBtn.textContent=cur?'☀️':'🌙';
+    localStorage.setItem('ai-art-theme',cur);
+  });
+
+  // Mobile menu
+  const menuBtn=document.getElementById('menuBtn');
+  const topnav=document.getElementById('topnav');
+  menuBtn.addEventListener('click',()=>topnav.classList.toggle('open'));
+  topnav.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>topnav.classList.remove('open')));
+
+  // Back to top
+  const backTop=document.getElementById('backTop');
+  window.addEventListener('scroll',()=>{
+    backTop.classList.toggle('show',window.scrollY>500);
+  });
+  backTop.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+
+  // Sidebar active highlight
+  const links=document.querySelectorAll('.sidebar a');
+  const sections=[...links].map(a=>document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  const obs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        const id='#'+e.target.id;
+        links.forEach(l=>l.classList.toggle('active',l.getAttribute('href')===id));
+      }
+    });
+  },{rootMargin:'-40% 0px -55% 0px'});
+  sections.forEach(s=>obs.observe(s));
+</script>
+</body>
+</html>
