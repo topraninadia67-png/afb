@@ -1,0 +1,17 @@
+.tabs { display: flex; background: var(--card); border-radius: 16rpx; padding: 8rpx; margin-bottom: 24rpx; }
+.tab { flex: 1; text-align: center; padding: 18rpx 0; font-size: 29rpx; color: var(--text-soft); border-radius: 12rpx; }
+.tab.on { background: var(--brand); color: #fff; font-weight: 600; }
+
+.check-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 22rpx 24rpx; border: 2rpx solid var(--line); border-radius: 14rpx; margin-bottom: 14rpx;
+  background: #faf9f7;
+}
+.check-item.bad { border-color: var(--bad); background: rgba(192,57,43,.05); }
+.ci-name { font-size: 29rpx; }
+.ci-state.ok { color: var(--ok); font-weight: 600; }
+.ci-state.no { color: var(--bad); font-weight: 600; }
+
+.hist-head { display: flex; align-items: center; justify-content: space-between; }
+.hist-area { font-size: 31rpx; font-weight: 700; }
+.hist-note { margin-top: 10rpx; font-size: 27rpx; color: var(--text-soft); }

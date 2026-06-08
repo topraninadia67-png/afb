@@ -1,0 +1,40 @@
+<view class="page">
+  <view class="tabs">
+    <view class="tab {{tab==='fill'?'on':''}}" data-tab="fill" bindtap="switchTab">填报检查</view>
+    <view class="tab {{tab==='history'?'on':''}}" data-tab="history" bindtap="switchTab">我的记录</view>
+  </view>
+
+  <!-- 填报 -->
+  <block wx:if="{{tab==='fill'}}">
+    <view class="card">
+      <view class="label">检查区域</view>
+      <picker class="picker" range="{{areas}}" value="{{areaIndex}}" bindchange="onAreaChange">
+        <view>{{areas[areaIndex]}} ▾</view>
+      </picker>
+
+      <view class="label">检查项（点击切换 正常 / 异常）</view>
+      <view class="check-item {{item.ok?'':'bad'}}" wx:for="{{items}}" wx:key="name" data-i="{{index}}" bindtap="toggleItem">
+        <text class="ci-name">{{item.name}}</text>
+        <text class="ci-state {{item.ok?'ok':'no'}}">{{item.ok ? '✓ 正常' : '✕ 异常'}}</text>
+      </view>
+
+      <view class="label">备注 / 异常说明</view>
+      <textarea class="textarea" placeholder="如发现问题，请描述具体情况" value="{{note}}" bindinput="onNote" maxlength="500" />
+
+      <button class="btn" bindtap="submit">提交检查</button>
+    </view>
+  </block>
+
+  <!-- 历史 -->
+  <block wx:else>
+    <view wx:if="{{history.length===0}}" class="empty">暂无检查记录</view>
+    <view class="card" wx:for="{{history}}" wx:key="_id">
+      <view class="hist-head">
+        <text class="hist-area">{{item.area}}</text>
+        <text class="tag {{item.problems>0?'tag-bad':'tag-ok'}}">{{item.problems>0 ? item.problems+'项异常' : '全部正常'}}</text>
+      </view>
+      <view class="muted">{{item.date}}</view>
+      <view wx:if="{{item.note}}" class="hist-note">备注：{{item.note}}</view>
+    </view>
+  </block>
+</view>

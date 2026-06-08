@@ -1,0 +1,37 @@
+<view class="page">
+  <view class="hero">
+    <view class="hero-title">三亚千古情艺术团</view>
+    <view class="hero-sub">团员日常管理 · 安全培训 · 制度查询</view>
+  </view>
+
+  <!-- 身份 -->
+  <view class="card">
+    <block wx:if="{{editingName}}">
+      <view class="label">请输入您的姓名（用于记录检查、考试、扣分）</view>
+      <input class="input" placeholder="如：张三" value="{{name}}" bindinput="onNameInput" confirm-type="done" bindconfirm="saveName" />
+      <button class="btn" bindtap="saveName">进入</button>
+    </block>
+    <block wx:else>
+      <view class="welcome">
+        <view>
+          <text class="muted">当前团员</text>
+          <view class="welcome-name">{{name}}</view>
+        </view>
+        <text class="link" bindtap="editName">切换</text>
+      </view>
+    </block>
+  </view>
+
+  <!-- 功能区 -->
+  <view class="grid">
+    <view class="feat" wx:for="{{features}}" wx:key="key" data-url="{{item.url}}" bindtap="go">
+      <view class="feat-icon">{{item.icon}}</view>
+      <view class="feat-title">{{item.title}}</view>
+      <view class="feat-desc">{{item.desc}}</view>
+    </view>
+  </view>
+
+  <view class="admin-entry" bindtap="goAdmin">
+    <text>🔐 管理员入口</text>
+  </view>
+</view>

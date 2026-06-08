@@ -1,0 +1,5 @@
+.lesson-head { display: flex; align-items: center; justify-content: space-between; }
+.lesson-title { font-size: 31rpx; font-weight: 700; }
+.arrow { color: var(--text-soft); font-size: 24rpx; }
+.lesson-body { margin-top: 18rpx; padding-top: 18rpx; border-top: 2rpx dashed var(--line); white-space: pre-wrap; font-size: 28rpx; color: #38332f; line-height: 1.8; }
+.exam-btn { margin-top: 12rpx; }

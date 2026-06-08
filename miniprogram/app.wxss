@@ -1,0 +1,107 @@
+/* ===== 全局样式 · 千古情红金主题 ===== */
+page {
+  --brand: #9a1f24;        /* 主红 */
+  --brand-dark: #7a1419;
+  --gold: #c8a05a;         /* 金 */
+  --bg: #f3f2ef;
+  --card: #ffffff;
+  --text: #1f1c1a;
+  --text-soft: #6b6660;
+  --line: #ece8e2;
+  --ok: #2e9e6b;
+  --warn: #d98a16;
+  --bad: #c0392b;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-size: 30rpx;
+  line-height: 1.6;
+}
+
+.page {
+  min-height: 100vh;
+  padding: 24rpx 28rpx calc(40rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+}
+
+.card {
+  background: var(--card);
+  border-radius: 20rpx;
+  padding: 28rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 6rpx 24rpx rgba(120, 30, 30, 0.06);
+}
+
+.card-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: var(--brand);
+  margin-bottom: 16rpx;
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+}
+
+.muted { color: var(--text-soft); font-size: 26rpx; }
+
+.label {
+  font-size: 27rpx;
+  color: var(--text-soft);
+  margin: 18rpx 0 10rpx;
+  display: block;
+}
+
+.input, .textarea, .picker {
+  width: 100%;
+  box-sizing: border-box;
+  background: #faf9f7;
+  border: 2rpx solid var(--line);
+  border-radius: 14rpx;
+  padding: 20rpx 22rpx;
+  font-size: 29rpx;
+  color: var(--text);
+}
+.textarea { min-height: 180rpx; }
+
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--brand);
+  color: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  font-size: 31rpx;
+  font-weight: 600;
+  border: none;
+  margin-top: 12rpx;
+}
+.btn::after { border: none; }
+.btn[disabled] { opacity: .5; }
+.btn-ghost {
+  background: #fff;
+  color: var(--brand);
+  border: 2rpx solid var(--brand);
+}
+.btn-gold { background: var(--gold); }
+
+.tag {
+  display: inline-block;
+  padding: 4rpx 16rpx;
+  border-radius: 999rpx;
+  font-size: 23rpx;
+  background: rgba(154, 31, 36, .08);
+  color: var(--brand);
+}
+.tag-ok { background: rgba(46,158,107,.12); color: var(--ok); }
+.tag-warn { background: rgba(217,138,22,.14); color: var(--warn); }
+.tag-bad { background: rgba(192,57,43,.12); color: var(--bad); }
+
+.empty {
+  text-align: center;
+  color: var(--text-soft);
+  padding: 80rpx 0;
+  font-size: 27rpx;
+}
+
+.divider { height: 2rpx; background: var(--line); margin: 24rpx 0; }

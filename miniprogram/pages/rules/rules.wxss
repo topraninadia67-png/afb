@@ -1,0 +1,12 @@
+.search-row { display: flex; gap: 14rpx; margin-top: 18rpx; align-items: stretch; }
+.search-row .input { flex: 1; }
+.search-btn { width: 150rpx; margin: 0; padding: 0; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 14rpx; margin-top: 20rpx; }
+.chip { padding: 10rpx 24rpx; background: #faf3f3; color: var(--brand); border-radius: 999rpx; font-size: 26rpx; border: 2rpx solid rgba(154,31,36,.12); }
+.chip:active { background: var(--brand); color: #fff; }
+
+.rule-head { display: flex; align-items: flex-start; justify-content: space-between; }
+.rule-title { font-size: 31rpx; font-weight: 700; margin-top: 10rpx; }
+.arrow { color: var(--text-soft); font-size: 24rpx; padding-top: 8rpx; }
+.rule-body { margin-top: 18rpx; padding-top: 18rpx; border-top: 2rpx dashed var(--line); white-space: pre-wrap; font-size: 28rpx; color: #38332f; }

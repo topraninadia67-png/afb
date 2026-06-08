@@ -1,0 +1,26 @@
+<view class="page">
+  <view class="card">
+    <view class="card-title">📖 制度查询助手</view>
+    <view class="muted">输入关键词，快速找到相关制度条款</view>
+    <view class="search-row">
+      <input class="input" placeholder="如：消防、请假、迟到怎么算…" value="{{kw}}" bindinput="onInput" confirm-type="search" bindconfirm="search" />
+      <button class="btn search-btn" bindtap="search">查询</button>
+    </view>
+    <view class="chips">
+      <text class="chip" wx:for="{{quick}}" wx:key="*this" data-kw="{{item}}" bindtap="quickSearch">{{item}}</text>
+    </view>
+  </view>
+
+  <view wx:if="{{searched && results.length===0}}" class="empty">未找到相关制度，换个关键词试试</view>
+
+  <view class="card rule" wx:for="{{results}}" wx:key="_id" data-id="{{item._id}}" bindtap="toggle">
+    <view class="rule-head">
+      <view>
+        <text class="tag">{{item.category}}</text>
+        <view class="rule-title">{{item.title}}</view>
+      </view>
+      <text class="arrow">{{expanded[item._id] ? '▲' : '▼'}}</text>
+    </view>
+    <view wx:if="{{expanded[item._id]}}" class="rule-body">{{item.content}}</view>
+  </view>
+</view>

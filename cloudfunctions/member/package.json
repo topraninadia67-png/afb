@@ -1,0 +1,9 @@
+{
+  "name": "member",
+  "version": "1.0.0",
+  "description": "团员端业务：日常检查填报、制度查询、扣分查询、随机出题、提交考试、匿名意见",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

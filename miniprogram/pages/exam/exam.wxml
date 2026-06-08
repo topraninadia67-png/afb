@@ -1,0 +1,44 @@
+<view class="page">
+  <!-- 结果 -->
+  <block wx:if="{{stage==='result'}}">
+    <view class="result {{result.pass?'pass':'fail'}}">
+      <view class="r-score">{{result.score}}</view>
+      <view class="r-text">{{result.pass ? '✅ 考试通过' : '❌ 未通过（需≥60）'}}</view>
+      <view class="r-sub">{{name}} · 答对 {{result.correct}}/{{result.total}}</view>
+    </view>
+    <view class="r-actions">
+      <button class="btn btn-ghost" bindtap="retry">再考一次</button>
+      <button class="btn" bindtap="goBack">返回</button>
+    </view>
+    <view class="review-title">答题解析</view>
+  </block>
+
+  <block wx:else>
+    <view class="quiz-tip card">
+      <text>共 {{questions.length}} 题 · 团员：{{name}}</text>
+    </view>
+  </block>
+
+  <!-- 题目列表 -->
+  <view class="card q" wx:for="{{questions}}" wx:key="_id">
+    <view class="q-head">
+      <text class="q-no">第{{index+1}}题</text>
+      <text class="tag">{{item.type==='judge'?'判断':'单选'}} · {{item.cat}}</text>
+    </view>
+    <view class="q-text">{{item.q}}</view>
+
+    <view class="opt
+        {{ stage==='doing' && answers[item._id]===idx ? 'sel' : '' }}
+        {{ stage==='result' && item.correctAnswer===idx ? 'right' : '' }}
+        {{ stage==='result' && item.myChoice===idx && !item.isCorrect ? 'wrong' : '' }}"
+      wx:for="{{item.options}}" wx:for-item="opt" wx:for-index="idx" wx:key="idx"
+      data-qid="{{item._id}}" data-idx="{{idx}}" bindtap="{{stage==='doing' ? 'choose' : ''}}">
+      <text class="opt-key">{{['A','B','C','D','E','F'][idx]}}</text>
+      <text class="opt-txt">{{opt}}</text>
+      <text wx:if="{{stage==='result' && item.correctAnswer===idx}}" class="opt-mark">✓</text>
+      <text wx:if="{{stage==='result' && item.myChoice===idx && !item.isCorrect}}" class="opt-mark bad">✕</text>
+    </view>
+  </view>
+
+  <button wx:if="{{stage==='doing' && questions.length}}" class="btn submit" bindtap="submit">交卷</button>
+</view>

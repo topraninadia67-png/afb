@@ -1,0 +1,22 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/daily/daily",
+    "pages/rules/rules",
+    "pages/deduction/deduction",
+    "pages/training/training",
+    "pages/exam/exam",
+    "pages/suggestion/suggestion",
+    "pages/admin/admin"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#9a1f24",
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "千古情艺术团",
+    "backgroundColor": "#f3f2ef",
+    "backgroundTextStyle": "dark"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

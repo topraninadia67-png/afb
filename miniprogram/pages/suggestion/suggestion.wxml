@@ -1,0 +1,27 @@
+<view class="page">
+  <block wx:if="{{!submitted}}">
+    <view class="card">
+      <view class="card-title">✉️ 匿名意见箱</view>
+      <view class="notice">🔒 完全匿名提交，系统不会记录您的姓名或任何身份信息，请放心反馈。</view>
+
+      <view class="label">意见类别</view>
+      <picker class="picker" range="{{cats}}" value="{{catIndex}}" bindchange="onCat">
+        <view>{{cats[catIndex]}} ▾</view>
+      </picker>
+
+      <view class="label">意见内容</view>
+      <textarea class="textarea" placeholder="请写下您的意见、建议或反映的问题…" value="{{content}}" bindinput="onContent" maxlength="1000" />
+
+      <button class="btn" bindtap="submit">匿名提交</button>
+    </view>
+  </block>
+
+  <block wx:else>
+    <view class="done">
+      <view class="done-icon">✅</view>
+      <view class="done-title">提交成功</view>
+      <view class="muted">感谢您的反馈，管理员会及时查看。</view>
+      <button class="btn btn-ghost again-btn" bindtap="again">再提一条</button>
+    </view>
+  </block>
+</view>

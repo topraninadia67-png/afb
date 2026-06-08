@@ -1,0 +1,36 @@
+.hero {
+  background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+  border-radius: 24rpx;
+  padding: 48rpx 36rpx;
+  color: #fff;
+  margin-bottom: 28rpx;
+  box-shadow: 0 10rpx 30rpx rgba(122, 20, 25, .25);
+}
+.hero-title { font-size: 44rpx; font-weight: 800; letter-spacing: 2rpx; }
+.hero-sub { margin-top: 12rpx; font-size: 26rpx; opacity: .85; }
+
+.welcome { display: flex; align-items: center; justify-content: space-between; }
+.welcome-name { font-size: 36rpx; font-weight: 700; margin-top: 4rpx; }
+.link { color: var(--brand); font-size: 27rpx; }
+
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22rpx; }
+.feat {
+  background: var(--card);
+  border-radius: 20rpx;
+  padding: 32rpx 26rpx;
+  box-shadow: 0 6rpx 22rpx rgba(120, 30, 30, .06);
+  border-top: 6rpx solid var(--gold);
+}
+.feat:active { transform: scale(.97); }
+.feat-icon { font-size: 54rpx; }
+.feat-title { font-size: 31rpx; font-weight: 700; margin-top: 14rpx; }
+.feat-desc { font-size: 24rpx; color: var(--text-soft); margin-top: 6rpx; }
+
+.admin-entry {
+  text-align: center;
+  margin-top: 36rpx;
+  color: var(--text-soft);
+  font-size: 27rpx;
+  padding: 20rpx;
+}
+.admin-entry:active { opacity: .6; }

@@ -1,0 +1,184 @@
+<view class="page">
+  <!-- 登录 -->
+  <block wx:if="{{!authed}}">
+    <view class="card login">
+      <view class="card-title">🔐 管理员登录</view>
+      <view class="muted">仅团长 / 管理员可查看全部汇总、意见箱与考试成绩。</view>
+      <input class="input" password placeholder="请输入管理员密码" value="{{password}}" bindinput="onPwd" bindconfirm="login" confirm-type="done" />
+      <button class="btn" bindtap="login">登录</button>
+    </view>
+  </block>
+
+  <!-- 后台 -->
+  <block wx:else>
+    <scroll-view scroll-x class="navbar" enable-flex>
+      <view class="nav {{tab==='overview'?'on':''}}" data-tab="overview" bindtap="switchTab">概览</view>
+      <view class="nav {{tab==='checks'?'on':''}}" data-tab="checks" bindtap="switchTab">检查汇总</view>
+      <view class="nav {{tab==='suggestions'?'on':''}}" data-tab="suggestions" bindtap="switchTab">意见箱</view>
+      <view class="nav {{tab==='exams'?'on':''}}" data-tab="exams" bindtap="switchTab">考试成绩</view>
+      <view class="nav {{tab==='deductions'?'on':''}}" data-tab="deductions" bindtap="switchTab">扣分管理</view>
+      <view class="nav {{tab==='content'?'on':''}}" data-tab="content" bindtap="switchTab">内容管理</view>
+    </scroll-view>
+
+    <!-- 概览 -->
+    <block wx:if="{{tab==='overview'}}">
+      <view class="stat-grid">
+        <view class="stat"><view class="stat-num">{{stats.checkToday||0}}</view><view class="stat-label">今日检查</view></view>
+        <view class="stat"><view class="stat-num">{{stats.checkAll||0}}</view><view class="stat-label">累计检查</view></view>
+        <view class="stat"><view class="stat-num warn">{{stats.sugNew||0}}</view><view class="stat-label">待处理意见</view></view>
+        <view class="stat"><view class="stat-num">{{stats.examAll||0}}</view><view class="stat-label">考试记录</view></view>
+        <view class="stat"><view class="stat-num bad">{{stats.dedAll||0}}</view><view class="stat-label">扣分记录</view></view>
+      </view>
+      <button class="btn btn-ghost" bindtap="logout">退出登录</button>
+    </block>
+
+    <!-- 检查汇总 -->
+    <block wx:elif="{{tab==='checks'}}">
+      <view class="filter">
+        <input class="input" placeholder="按姓名筛选" value="{{checkName}}" bindinput="onCheckName" bindconfirm="loadChecks" confirm-type="search" />
+        <view class="chk {{checkOnlyProblem?'on':''}}" bindtap="toggleCheckProblem">仅看异常</view>
+      </view>
+      <view wx:if="{{checks.length===0}}" class="empty">暂无记录</view>
+      <view class="card" wx:for="{{checks}}" wx:key="_id">
+        <view class="row-head">
+          <text class="b">{{item.name}} · {{item.area}}</text>
+          <text class="tag {{item.problems>0?'tag-bad':'tag-ok'}}">{{item.problems>0?item.problems+'项异常':'正常'}}</text>
+        </view>
+        <view class="muted">{{item.date}}</view>
+        <view wx:if="{{item.note}}" class="note">备注：{{item.note}}</view>
+        <view class="items" wx:if="{{item.problems>0}}">
+          <text wx:for="{{item.items}}" wx:for-item="it" wx:key="name" wx:if="{{!it.ok}}" class="bad-item">✕ {{it.name}}</text>
+        </view>
+      </view>
+    </block>
+
+    <!-- 意见箱 -->
+    <block wx:elif="{{tab==='suggestions'}}">
+      <view class="seg">
+        <text class="seg-i {{sugFilter==='all'?'on':''}}" data-f="all" bindtap="setSugFilter">全部</text>
+        <text class="seg-i {{sugFilter==='未处理'?'on':''}}" data-f="未处理" bindtap="setSugFilter">未处理</text>
+        <text class="seg-i {{sugFilter==='已处理'?'on':''}}" data-f="已处理" bindtap="setSugFilter">已处理</text>
+      </view>
+      <view wx:if="{{suggestions.length===0}}" class="empty">暂无意见</view>
+      <view class="card" wx:for="{{suggestions}}" wx:key="_id">
+        <view class="row-head">
+          <text class="tag">{{item.category}}</text>
+          <text class="tag {{item.status==='未处理'?'tag-warn':'tag-ok'}}">{{item.status}}</text>
+        </view>
+        <view class="sug-content">{{item.content}}</view>
+        <button wx:if="{{item.status==='未处理'}}" class="mini-btn" data-id="{{item._id}}" bindtap="markHandled">标记已处理</button>
+      </view>
+    </block>
+
+    <!-- 考试成绩 -->
+    <block wx:elif="{{tab==='exams'}}">
+      <view class="filter">
+        <input class="input" placeholder="按姓名筛选" value="{{examName}}" bindinput="onExamName" bindconfirm="loadExams" confirm-type="search" />
+      </view>
+      <view wx:if="{{exams.length===0}}" class="empty">暂无成绩</view>
+      <view class="card exam-row" wx:for="{{exams}}" wx:key="_id">
+        <view>
+          <text class="b">{{item.name}}</text>
+          <view class="muted">答对 {{item.correct}}/{{item.total}}</view>
+        </view>
+        <text class="score {{item.pass?'ok':'bad'}}">{{item.score}}</text>
+      </view>
+    </block>
+
+    <!-- 扣分管理 -->
+    <block wx:elif="{{tab==='deductions'}}">
+      <view class="card">
+        <view class="card-title">录入扣分</view>
+        <input class="input" placeholder="团员姓名" value="{{dedForm.name}}" data-k="name" bindinput="onDedForm" />
+        <input class="input mt" type="digit" placeholder="扣分值（如 2）" value="{{dedForm.points}}" data-k="points" bindinput="onDedForm" />
+        <input class="input mt" placeholder="扣分原因" value="{{dedForm.reason}}" data-k="reason" bindinput="onDedForm" />
+        <button class="btn" bindtap="addDeduction">录入</button>
+      </view>
+      <view class="filter">
+        <input class="input" placeholder="按姓名查询扣分" value="{{dedName}}" bindinput="onDedName" bindconfirm="loadDeductions" confirm-type="search" />
+      </view>
+      <view class="card ded-row" wx:for="{{deductions}}" wx:key="_id">
+        <view>
+          <text class="b">{{item.name}} <text class="bad">-{{item.points}}</text></text>
+          <view class="muted">{{item.date}} · {{item.reason}}</view>
+        </view>
+        <text class="del" data-id="{{item._id}}" bindtap="delDeduction">删除</text>
+      </view>
+    </block>
+
+    <!-- 内容管理 -->
+    <block wx:elif="{{tab==='content'}}">
+      <view class="seg">
+        <text class="seg-i {{contentSub==='rule'?'on':''}}" data-s="rule" bindtap="setContentSub">制度</text>
+        <text class="seg-i {{contentSub==='quiz'?'on':''}}" data-s="quiz" bindtap="setContentSub">题库</text>
+        <text class="seg-i {{contentSub==='train'?'on':''}}" data-s="train" bindtap="setContentSub">培训</text>
+        <text class="seg-i {{contentSub==='setting'?'on':''}}" data-s="setting" bindtap="setContentSub">设置</text>
+      </view>
+
+      <!-- 制度 -->
+      <block wx:if="{{contentSub==='rule'}}">
+        <view class="card">
+          <view class="card-title">新增制度</view>
+          <input class="input" placeholder="分类（如 安全制度）" value="{{ruleForm.category}}" data-k="category" bindinput="onRuleForm" />
+          <input class="input mt" placeholder="标题" value="{{ruleForm.title}}" data-k="title" bindinput="onRuleForm" />
+          <textarea class="textarea mt" placeholder="制度正文" value="{{ruleForm.content}}" data-k="content" bindinput="onRuleForm" />
+          <input class="input mt" placeholder="检索关键词（逗号分隔）" value="{{ruleForm.keywords}}" data-k="keywords" bindinput="onRuleForm" />
+          <button class="btn" bindtap="addRule">添加</button>
+        </view>
+        <view class="card list-row" wx:for="{{rules}}" wx:key="_id">
+          <text>{{item.title}}</text>
+          <text class="del" data-id="{{item._id}}" bindtap="delRule">删除</text>
+        </view>
+      </block>
+
+      <!-- 题库 -->
+      <block wx:elif="{{contentSub==='quiz'}}">
+        <view class="card">
+          <view class="card-title">新增题目</view>
+          <view class="type-sel">
+            <text class="type-i {{quizForm.type==='single'?'on':''}}" data-t="single" bindtap="setQuizType">单选</text>
+            <text class="type-i {{quizForm.type==='judge'?'on':''}}" data-t="judge" bindtap="setQuizType">判断</text>
+          </view>
+          <textarea class="textarea mt" placeholder="题干" value="{{quizForm.q}}" data-k="q" bindinput="onQuizForm" />
+          <block wx:if="{{quizForm.type==='single'}}">
+            <input class="input mt" placeholder="选项A" value="{{quizForm.o0}}" data-k="o0" bindinput="onQuizForm" />
+            <input class="input mt" placeholder="选项B" value="{{quizForm.o1}}" data-k="o1" bindinput="onQuizForm" />
+            <input class="input mt" placeholder="选项C（可空）" value="{{quizForm.o2}}" data-k="o2" bindinput="onQuizForm" />
+            <input class="input mt" placeholder="选项D（可空）" value="{{quizForm.o3}}" data-k="o3" bindinput="onQuizForm" />
+            <input class="input mt" type="number" placeholder="正确答案序号：0=A 1=B 2=C 3=D" value="{{quizForm.answer}}" data-k="answer" bindinput="onQuizForm" />
+          </block>
+          <block wx:else>
+            <input class="input mt" type="number" placeholder="正确答案：0=正确 1=错误" value="{{quizForm.answer}}" data-k="answer" bindinput="onQuizForm" />
+          </block>
+          <input class="input mt" placeholder="分类（如 消防安全）" value="{{quizForm.cat}}" data-k="cat" bindinput="onQuizForm" />
+          <button class="btn" bindtap="addQuiz">添加</button>
+        </view>
+        <view class="card list-row" wx:for="{{quizzes}}" wx:key="_id">
+          <text class="q-mini">{{item.q}}</text>
+          <text class="del" data-id="{{item._id}}" bindtap="delQuiz">删除</text>
+        </view>
+      </block>
+
+      <!-- 培训 -->
+      <block wx:elif="{{contentSub==='train'}}">
+        <view class="card">
+          <view class="card-title">新增培训资料</view>
+          <input class="input" type="number" placeholder="排序号（如 1）" value="{{trainForm.order}}" data-k="order" bindinput="onTrainForm" />
+          <input class="input mt" placeholder="标题" value="{{trainForm.title}}" data-k="title" bindinput="onTrainForm" />
+          <textarea class="textarea mt" placeholder="培训正文" value="{{trainForm.body}}" data-k="body" bindinput="onTrainForm" />
+          <button class="btn" bindtap="addTraining">添加</button>
+        </view>
+      </block>
+
+      <!-- 设置 -->
+      <block wx:elif="{{contentSub==='setting'}}">
+        <view class="card">
+          <view class="card-title">修改管理员密码</view>
+          <input class="input" password placeholder="新密码（至少4位）" value="{{newPwd}}" bindinput="onNewPwd" />
+          <button class="btn" bindtap="changePwd">保存新密码</button>
+        </view>
+        <button class="btn btn-ghost" bindtap="logout">退出登录</button>
+      </block>
+    </block>
+  </block>
+</view>

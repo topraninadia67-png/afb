@@ -1,0 +1,16 @@
+<view class="page">
+  <view class="summary">
+    <view class="sum-name">{{name}}</view>
+    <view class="sum-total">累计扣分 <text class="num">{{total}}</text> 分</view>
+  </view>
+
+  <view wx:if="{{loaded && list.length===0}}" class="empty">🎉 暂无扣分记录，继续保持！</view>
+
+  <view class="card ded" wx:for="{{list}}" wx:key="_id">
+    <view class="ded-head">
+      <text class="ded-points">-{{item.points}} 分</text>
+      <text class="muted">{{item.date}}</text>
+    </view>
+    <view class="ded-reason">{{item.reason || '（无说明）'}}</view>
+  </view>
+</view>

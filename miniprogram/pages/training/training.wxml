@@ -1,0 +1,18 @@
+<view class="page">
+  <view class="card intro">
+    <view class="card-title">🎓 安全 / 制度培训</view>
+    <view class="muted">先学习以下资料，再进行随机出题考试（满分100，60分及格）。</view>
+  </view>
+
+  <view class="card lesson" wx:for="{{list}}" wx:key="_id" data-id="{{item._id}}" bindtap="toggle">
+    <view class="lesson-head">
+      <text class="lesson-title">{{item.order}}. {{item.title}}</text>
+      <text class="arrow">{{openId===item._id ? '▲' : '▼'}}</text>
+    </view>
+    <view wx:if="{{openId===item._id}}" class="lesson-body">{{item.body}}</view>
+  </view>
+
+  <view wx:if="{{list.length===0}}" class="empty">暂无培训资料</view>
+
+  <button class="btn btn-gold exam-btn" bindtap="startExam">📝 开始随机出题考试</button>
+</view>
