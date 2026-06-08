@@ -11,13 +11,44 @@
 
 ## 使用方式
 
-直接用浏览器打开 `index.html` 即可，无需任何构建或依赖。
+直接用浏览器打开 `index.html` 即可阅读，无需任何构建或依赖。
 
 ```
 双击 index.html  →  浏览器中打开
 ```
 
 支持深色 / 浅色主题切换、移动端响应式、侧边栏导航高亮。
+
+## 📲 手机 App（PWA）
+
+本手册已封装为 **PWA（渐进式 Web 应用）**，可像原生 app 一样安装到手机主屏、全屏运行并离线使用。
+
+**安装步骤：**
+
+1. 把整个目录部署到任意支持 **HTTPS** 的静态托管（GitHub Pages、Netlify、Vercel、Cloudflare Pages 等）。
+2. 用手机浏览器打开页面：
+   - **Android / Chrome**：点击右上角「📲 安装到主屏」按钮，或浏览器菜单 →「安装应用 / 添加到主屏幕」。
+   - **iOS / Safari**：点击底部「分享」→「添加到主屏幕」。
+3. 之后从主屏图标启动，即为全屏 app 体验，断网也能正常查看。
+
+> ⚠️ 注意：PWA 的安装与离线功能依赖 Service Worker，**必须通过 `http(s)://` 访问**（线上托管或 `localhost`）。直接双击 `file://` 打开仅能阅读，无法安装/离线。
+
+**本地预览 app 效果：**
+
+```bash
+# 在项目根目录运行任意静态服务器
+python3 -m http.server 8000
+# 然后浏览器打开 http://localhost:8000
+```
+
+**PWA 相关文件：**
+
+| 文件 | 作用 |
+|------|------|
+| `manifest.webmanifest` | App 名称、图标、主题色、启动方式 |
+| `sw.js` | Service Worker，负责离线缓存 |
+| `icons/` | App 图标（192 / 512 / 180） |
+| `tools/gen_icons.py` | 图标生成脚本（纯 Python，无依赖）|
 
 ## 维护提示
 
