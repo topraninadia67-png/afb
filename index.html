@@ -1084,6 +1084,15 @@ highly detailed, 8k --ar 16:9 --style raw</pre>
 </footer>
 
 <script>
+  // 最先执行：注册 Service Worker 并在更新时自动刷新（防止旧版本把自己锁死）
+  if('serviceWorker' in navigator){
+    let _reloaded=false;
+    navigator.serviceWorker.addEventListener('controllerchange',()=>{
+      if(_reloaded)return;_reloaded=true;location.reload();
+    });
+    navigator.serviceWorker.register('sw.js').then(r=>{try{r.update();}catch(e){}}).catch(()=>{});
+  }
+
   // Theme toggle
   const themeBtn=document.getElementById('themeBtn');
   const saved=localStorage.getItem('ai-art-theme');
@@ -1183,12 +1192,7 @@ highly detailed, 8k --ar 16:9 --style raw</pre>
     try{c.textContent=(JSON.parse(localStorage.getItem('ai-art-prompt-drafts')||'[]').length)+' 条';}catch(e){}
   })();
 
-  // ===== PWA: service worker + install prompt =====
-  if('serviceWorker' in navigator){
-    window.addEventListener('load',()=>{
-      navigator.serviceWorker.register('sw.js').catch(err=>console.warn('SW 注册失败:',err));
-    });
-  }
+  // ===== PWA: install prompt（SW 已在脚本顶部注册） =====
   let deferredPrompt=null;
   const installBtn=document.getElementById('installBtn');
   const meInstall=document.getElementById('meInstall');
