@@ -190,6 +190,58 @@
     .menu-btn{display:grid;place-items:center;margin-left:auto;background:var(--bg-soft);
       border:1px solid var(--line);color:var(--text);width:38px;height:38px;border-radius:10px;cursor:pointer;font-size:18px}
   }
+
+  /* ===== 提示词练习器 ===== */
+  .pp-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}
+  .pp-tab{cursor:pointer;font-size:.85rem;padding:8px 16px;border-radius:999px;border:1px solid var(--line);
+    background:var(--bg-soft);color:var(--text-soft)}
+  .pp-tab.active{background:linear-gradient(135deg,var(--brand),var(--brand-3));color:#fff;border-color:transparent}
+  .pp-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+  .pp-field{margin-bottom:14px}
+  .pp-field>label{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-weight:600;font-size:.92rem;margin-bottom:6px}
+  .pp-field .req{color:var(--brand-3);font-size:.72rem;font-weight:700}
+  .pp-field .hint{font-size:.78rem;color:var(--text-dim);font-weight:400}
+  .pp-input,.pp-textarea{width:100%;background:var(--bg-soft);border:1px solid var(--line);border-radius:10px;
+    color:var(--text);padding:10px 12px;font-size:.95rem;font-family:inherit;transition:border-color .2s}
+  .pp-input:focus,.pp-textarea:focus{outline:none;border-color:var(--brand)}
+  .pp-textarea{min-height:72px;resize:vertical;line-height:1.5}
+  .pp-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+  .pp-chip{cursor:pointer;font-size:.76rem;padding:4px 10px;border-radius:999px;border:1px dashed var(--line);
+    background:transparent;color:var(--text-soft)}
+  .pp-chip:hover{border-color:var(--brand);color:var(--brand-2);border-style:solid}
+  .pp-out{background:var(--bg-soft);border:1px solid var(--line);border-radius:12px;padding:14px;
+    font-family:"SF Mono",Menlo,Consolas,monospace;font-size:.9rem;line-height:1.65;white-space:pre-wrap;
+    word-break:break-word;min-height:60px;color:var(--text)}
+  .pp-out .neg{color:var(--bad)}
+  .pp-out .ph{color:var(--text-dim)}
+  .pp-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+  .pp-btn{cursor:pointer;font-size:.88rem;font-weight:600;border:none;border-radius:10px;padding:10px 16px;
+    background:linear-gradient(135deg,var(--brand),var(--brand-3));color:#fff}
+  .pp-btn.ghost{background:var(--bg-soft);border:1px solid var(--line);color:var(--text)}
+  .pp-btn:hover{filter:brightness(1.08)}
+  .pp-score{display:flex;align-items:center;gap:14px;margin:10px 0}
+  .pp-meter{flex:1;height:10px;border-radius:999px;background:var(--bg-soft);border:1px solid var(--line);overflow:hidden}
+  .pp-meter>i{display:block;height:100%;width:0;border-radius:999px;
+    background:linear-gradient(90deg,var(--bad),var(--warn),var(--ok));transition:width .35s}
+  .pp-score b{font-size:1.5rem;font-variant-numeric:tabular-nums;min-width:2.4ch;text-align:right}
+  .pp-tips{list-style:none;margin-top:4px;display:flex;flex-direction:column;gap:7px}
+  .pp-tips li{font-size:.86rem;padding:8px 12px;border-radius:9px;background:var(--bg-soft);border-left:3px solid var(--line)}
+  .pp-tips li.ok{border-left-color:var(--ok)}
+  .pp-tips li.warn{border-left-color:var(--warn)}
+  .pp-tips li.bad{border-left-color:var(--bad)}
+  .pp-brief{background:linear-gradient(135deg,rgba(124,92,255,.12),rgba(244,114,182,.12));
+    border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-top:16px}
+  .pp-brief .k{font-size:.78rem;color:var(--text-dim);margin-bottom:4px}
+  .pp-brief .v{font-size:1.02rem;font-weight:600;line-height:1.5}
+  .pp-drafts{margin-top:10px;display:flex;flex-direction:column;gap:8px}
+  .pp-draft{display:flex;align-items:center;justify-content:space-between;gap:10px;
+    background:var(--bg-soft);border:1px solid var(--line);border-radius:9px;padding:8px 12px;font-size:.86rem}
+  .pp-draft span{flex:1;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .pp-draft span:hover{color:var(--brand-2)}
+  .pp-draft .x{cursor:pointer;color:var(--text-dim);border:none;background:none;font-size:1.05rem;line-height:1;flex:none}
+  .pp-draft .x:hover{color:var(--bad)}
+  .pp-copied{font-size:.82rem;color:var(--ok)}
+  @media(max-width:760px){.pp-grid{grid-template-columns:1fr;gap:8px}}
 </style>
 </head>
 <body>
@@ -207,6 +259,7 @@
       <a href="#video">视频模型</a>
       <a href="#agent">Agent</a>
       <a href="#prompt">提示词</a>
+      <a href="#practice">练习器</a>
       <a href="#ethics">合规</a>
     </nav>
     <button class="install-btn" id="installBtn" hidden>📲 安装到主屏</button>
@@ -243,6 +296,7 @@
     <a href="#agent">Agent 与自动化</a>
     <h4>方法</h4>
     <a href="#prompt">提示词工程</a>
+    <a href="#practice">✍️ 提示词练习器</a>
     <a href="#compare">选型对比</a>
     <a href="#cases">实战案例</a>
     <h4>规范</h4>
@@ -606,6 +660,150 @@ highly detailed, 8k --ar 16:9 --style raw</pre>
       </div>
     </section>
 
+    <!-- ===== 提示词练习器 ===== -->
+    <section id="practice" class="anchor-h">
+      <div class="sec-tag">第 7.5 章 · 动手练</div>
+      <h2><span class="ic">✍️</span>提示词练习器</h2>
+      <p class="lead">边学边练：按「主体→环境→光线→镜头→风格→参数」的结构填空，实时拼出提示词，并获得教练式评分与改进建议。</p>
+
+      <!-- 命题挑战 -->
+      <div class="pp-brief">
+        <div class="k">🎯 今日命题（照着练手）</div>
+        <div class="v" id="ppBrief">点「换一题」获取一个创作命题</div>
+        <div class="pp-row" style="margin-top:10px">
+          <button class="pp-btn ghost" id="ppNewBrief" type="button">🔀 换一题</button>
+        </div>
+      </div>
+
+      <!-- 目标模型 -->
+      <div class="pp-tabs" id="ppTabs">
+        <button class="pp-tab active" data-model="general" type="button">通用</button>
+        <button class="pp-tab" data-model="mj" type="button">Midjourney</button>
+        <button class="pp-tab" data-model="sd" type="button">Flux · SD</button>
+      </div>
+
+      <div class="pp-grid">
+        <!-- 左：输入 -->
+        <div class="pp-wrap">
+          <div class="pp-field">
+            <label>主体 <span class="req">必填</span> <span class="hint">画面核心是什么</span></label>
+            <input class="pp-input" id="pp-subject" placeholder="a young woman, ancient dragon...">
+            <div class="pp-chips" data-target="pp-subject">
+              <button class="pp-chip" type="button">a young woman</button>
+              <button class="pp-chip" type="button">ancient dragon</button>
+              <button class="pp-chip" type="button">neon city</button>
+              <button class="pp-chip" type="button">a glass bottle of drink</button>
+            </div>
+          </div>
+          <div class="pp-field">
+            <label>环境 / 场景 <span class="hint">主体所处的空间</span></label>
+            <input class="pp-input" id="pp-env" placeholder="forest stream, cyberpunk alley...">
+            <div class="pp-chips" data-target="pp-env">
+              <button class="pp-chip" type="button">forest stream</button>
+              <button class="pp-chip" type="button">cyberpunk alley</button>
+              <button class="pp-chip" type="button">desert at dusk</button>
+              <button class="pp-chip" type="button">starry sky</button>
+            </div>
+          </div>
+          <div class="pp-field">
+            <label>光线 <span class="hint">氛围决定项</span></label>
+            <input class="pp-input" id="pp-light" placeholder="golden hour, rim light...">
+            <div class="pp-chips" data-target="pp-light">
+              <button class="pp-chip" type="button">golden hour</button>
+              <button class="pp-chip" type="button">rim light</button>
+              <button class="pp-chip" type="button">soft studio light</button>
+              <button class="pp-chip" type="button">4500K warm light, long shadows</button>
+            </div>
+          </div>
+          <div class="pp-field">
+            <label>镜头 <span class="hint">视角与构图</span></label>
+            <input class="pp-input" id="pp-camera" placeholder="wide shot, close-up, 85mm...">
+            <div class="pp-chips" data-target="pp-camera">
+              <button class="pp-chip" type="button">wide shot</button>
+              <button class="pp-chip" type="button">close-up</button>
+              <button class="pp-chip" type="button">low angle</button>
+              <button class="pp-chip" type="button">85mm</button>
+            </div>
+          </div>
+          <div class="pp-field">
+            <label>风格 <span class="hint">美学方向</span></label>
+            <input class="pp-input" id="pp-style" placeholder="oil painting, anime, photorealistic...">
+            <div class="pp-chips" data-target="pp-style">
+              <button class="pp-chip" type="button">photorealistic</button>
+              <button class="pp-chip" type="button">anime</button>
+              <button class="pp-chip" type="button">oil painting</button>
+              <button class="pp-chip" type="button">cyberpunk</button>
+            </div>
+          </div>
+          <div class="pp-field">
+            <label>画质 <span class="hint">细节与质感</span></label>
+            <input class="pp-input" id="pp-quality" placeholder="highly detailed, 8k, film grain...">
+            <div class="pp-chips" data-target="pp-quality">
+              <button class="pp-chip" type="button">highly detailed</button>
+              <button class="pp-chip" type="button">8k</button>
+              <button class="pp-chip" type="button">film grain</button>
+            </div>
+          </div>
+          <div class="pp-field" id="pp-params-field" hidden>
+            <label>参数 <span class="hint">Midjourney 技术控制</span></label>
+            <input class="pp-input" id="pp-params" placeholder="--ar 16:9 --style raw --chaos 20">
+            <div class="pp-chips" data-target="pp-params">
+              <button class="pp-chip" type="button">--ar 16:9</button>
+              <button class="pp-chip" type="button">--ar 9:16</button>
+              <button class="pp-chip" type="button">--style raw</button>
+              <button class="pp-chip" type="button">--chaos 20</button>
+            </div>
+          </div>
+          <div class="pp-field" id="pp-negative-field" hidden>
+            <label>负面提示词 <span class="hint">Flux/SD 排除不想要的元素</span></label>
+            <textarea class="pp-textarea" id="pp-negative" placeholder="lowres, extra fingers, watermark..."></textarea>
+            <div class="pp-chips" data-target="pp-negative">
+              <button class="pp-chip" type="button">lowres</button>
+              <button class="pp-chip" type="button">extra fingers</button>
+              <button class="pp-chip" type="button">watermark</button>
+              <button class="pp-chip" type="button">bad anatomy</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 右：输出 + 反馈 -->
+        <div class="pp-wrap">
+          <div class="pp-field">
+            <label>🧩 生成的提示词</label>
+            <div class="pp-out" id="ppOut"><span class="ph">在左侧填入要素，这里会实时拼出提示词…</span></div>
+            <div class="pp-row">
+              <button class="pp-btn" id="ppCopy" type="button">📋 复制</button>
+              <button class="pp-btn ghost" id="ppClear" type="button">🗑️ 清空</button>
+              <span class="pp-copied" id="ppCopied" hidden>已复制 ✓</span>
+            </div>
+          </div>
+
+          <div class="pp-field">
+            <label>📊 质量评分（教练反馈）</label>
+            <div class="pp-score">
+              <div class="pp-meter"><i id="ppMeter"></i></div>
+              <b id="ppScore">0</b>
+            </div>
+            <ul class="pp-tips" id="ppTips"></ul>
+          </div>
+
+          <div class="pp-field">
+            <label>💾 我的草稿</label>
+            <div class="pp-row">
+              <input class="pp-input" id="ppDraftName" placeholder="给这条提示词起个名字" style="flex:1;min-width:140px">
+              <button class="pp-btn ghost" id="ppSave" type="button">保存</button>
+            </div>
+            <div class="pp-drafts" id="ppDrafts"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="note tip" style="margin-top:18px">
+        <div class="h">💡 练习建议</div>
+        先按上面的「命题」练 3～5 条，目标是评分稳定到 85+。记不住英文词没关系——把拼好的中文创意丢给 GPT/Claude 让它润色成地道英文，再回来对照学习。
+      </div>
+    </section>
+
     <!-- 选型对比 -->
     <section id="compare" class="anchor-h">
       <div class="sec-tag">第 8 章 · 方法</div>
@@ -821,6 +1019,181 @@ highly detailed, 8k --ar 16:9 --style raw</pre>
     deferredPrompt=null;
     if(installBtn)installBtn.hidden=true;
   });
+
+  // ===== 提示词练习器 =====
+  (function(){
+    const F={subject:'pp-subject',env:'pp-env',light:'pp-light',camera:'pp-camera',
+      style:'pp-style',quality:'pp-quality',params:'pp-params',negative:'pp-negative'};
+    const el={};
+    for(const k in F)el[k]=document.getElementById(F[k]);
+    if(!el.subject)return; // section not present
+
+    const out=document.getElementById('ppOut');
+    const meter=document.getElementById('ppMeter');
+    const scoreEl=document.getElementById('ppScore');
+    const tipsEl=document.getElementById('ppTips');
+    const paramsField=document.getElementById('pp-params-field');
+    const negField=document.getElementById('pp-negative-field');
+    let model='general';
+
+    const VAGUE=['好看','漂亮','美丽','好','炫酷','高级','nice','beautiful','cool','pretty','awesome','great'];
+    const val=k=>(el[k]?el[k].value:'').trim();
+
+    // 点击示例词 → 追加到对应输入框（逗号分隔、去重）
+    document.querySelectorAll('#practice .pp-chips').forEach(box=>{
+      const target=document.getElementById(box.getAttribute('data-target'));
+      box.querySelectorAll('.pp-chip').forEach(chip=>{
+        chip.addEventListener('click',()=>{
+          const word=chip.textContent.trim();
+          const parts=target.value.split(',').map(s=>s.trim()).filter(Boolean);
+          if(!parts.includes(word))parts.push(word);
+          target.value=parts.join(', ');
+          target.dispatchEvent(new Event('input'));
+        });
+      });
+    });
+
+    // 目标模型切换
+    document.querySelectorAll('#ppTabs .pp-tab').forEach(tab=>{
+      tab.addEventListener('click',()=>{
+        document.querySelectorAll('#ppTabs .pp-tab').forEach(t=>t.classList.remove('active'));
+        tab.classList.add('active');
+        model=tab.getAttribute('data-model');
+        paramsField.hidden=(model!=='mj');
+        negField.hidden=(model!=='sd');
+        render();
+      });
+    });
+
+    function buildPrompt(){
+      const order=['subject','env','light','camera','style','quality'];
+      const pos=order.map(val).filter(Boolean).join(', ');
+      let p=pos;
+      if(model==='mj'&&val('params'))p=(pos?pos+' ':'')+val('params');
+      return {pos:p,neg:(model==='sd'?val('negative'):'')};
+    }
+
+    function score(){
+      const w={subject:25,style:18,light:15,camera:15,env:12,quality:8};
+      let s=0;
+      for(const k in w)if(val(k))s+=w[k];
+      // 额外 7 分：MJ 参数 / SD 负面 / 通用画质已计
+      if(model==='mj'&&val('params'))s+=7;
+      else if(model==='sd'&&val('negative'))s+=7;
+      else if(model==='general'&&val('quality'))s+=7;
+      return Math.min(100,s);
+    }
+
+    function tips(){
+      const t=[];
+      if(!val('subject')){t.push(['bad','先填「主体」——它是画面的核心，必填。']);}
+      const vagueHit=Object.keys(F).some(k=>{const v=val(k).toLowerCase();return VAGUE.some(w=>v.includes(w.toLowerCase()));});
+      if(vagueHit)t.push(['warn','检测到抽象词（如「好看/beautiful」）。记住：具体优于抽象，换成具体的艺术家、流派或参考。']);
+      if(val('subject')&&!val('style'))t.push(['warn','指定「风格」（如 anime / photorealistic），避免模型自由发挥。']);
+      if(val('subject')&&!val('light'))t.push(['warn','加上「光线」（如 golden hour / rim light），氛围立刻提升。']);
+      if(val('subject')&&!val('camera'))t.push(['warn','补一个「镜头」（如 wide shot / 85mm），构图更可控。']);
+      if(model==='mj'&&!val('params'))t.push(['warn','Midjourney 别忘了参数，至少加 --ar 16:9 控制比例。']);
+      if(model==='sd'&&!val('negative'))t.push(['warn','Flux/SD 建议写「负面提示词」排除 多手指/水印/低质，显著提升可用率。']);
+      const sc=score();
+      if(sc>=85)t.unshift(['ok','结构完整、要素到位，可以直接拿去出图了！']);
+      else if(sc>=60)t.unshift(['ok','基础不错，再按下面建议补几项就更稳了。']);
+      if(!t.length)t.push(['ok','开始在左侧填入要素吧。']);
+      return t;
+    }
+
+    function render(){
+      const {pos,neg}=buildPrompt();
+      if(!pos&&!neg){
+        out.innerHTML='<span class="ph">在左侧填入要素，这里会实时拼出提示词…</span>';
+      }else{
+        let html=pos?pos.replace(/</g,'&lt;'):'<span class="ph">（还没有正向提示词）</span>';
+        if(neg)html+='\n<span class="neg">Negative: '+neg.replace(/</g,'&lt;')+'</span>';
+        out.innerHTML=html;
+      }
+      const sc=score();
+      scoreEl.textContent=sc;
+      meter.style.width=sc+'%';
+      tipsEl.innerHTML='';
+      tips().forEach(([cls,msg])=>{
+        const li=document.createElement('li');
+        li.className=cls;li.textContent=msg;tipsEl.appendChild(li);
+      });
+    }
+
+    Object.values(el).forEach(input=>input&&input.addEventListener('input',render));
+
+    // 复制
+    document.getElementById('ppCopy').addEventListener('click',async()=>{
+      const {pos,neg}=buildPrompt();
+      let text=pos;
+      if(neg)text+='\nNegative prompt: '+neg;
+      if(!text.trim())return;
+      try{await navigator.clipboard.writeText(text);}catch(e){
+        const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);
+        ta.select();try{document.execCommand('copy');}catch(_){}document.body.removeChild(ta);
+      }
+      const c=document.getElementById('ppCopied');c.hidden=false;setTimeout(()=>c.hidden=true,1600);
+    });
+
+    // 清空
+    document.getElementById('ppClear').addEventListener('click',()=>{
+      Object.values(el).forEach(i=>{if(i)i.value='';});render();
+    });
+
+    // 命题挑战
+    const BRIEFS=[
+      '为一款主打"未来感+自然清新"的虚拟饮品，做一张产品概念海报关键帧。',
+      '科幻题材：一座漂浮在云海之上的古代东方城市，黄昏时分。',
+      '角色设定：一位赛博朋克风格的女黑客，霓虹雨夜的街头特写。',
+      '为咖啡品牌做一张温暖治愈风的早晨场景图，适合社媒竖版。',
+      '奇幻题材：一条盘踞在火山口的远古巨龙，史诗电影感。',
+      '极简商业风：一只悬浮的香水瓶，纯色背景，强调质感与高级光影。',
+      '国风插画：水墨风格的山水间，一叶扁舟，留白意境。',
+      '广告写实：一双运动鞋在雨中溅起水花的高速定格特写。'
+    ];
+    const briefEl=document.getElementById('ppBrief');
+    document.getElementById('ppNewBrief').addEventListener('click',()=>{
+      briefEl.textContent=BRIEFS[Math.floor(Math.random()*BRIEFS.length)];
+    });
+
+    // 草稿（localStorage）
+    const DKEY='ai-art-prompt-drafts';
+    const draftsEl=document.getElementById('ppDrafts');
+    const nameEl=document.getElementById('ppDraftName');
+    const loadDrafts=()=>{try{return JSON.parse(localStorage.getItem(DKEY)||'[]');}catch(e){return [];}};
+    const saveDrafts=d=>localStorage.setItem(DKEY,JSON.stringify(d));
+
+    function renderDrafts(){
+      const d=loadDrafts();
+      draftsEl.innerHTML='';
+      if(!d.length){draftsEl.innerHTML='<div style="font-size:.82rem;color:var(--text-dim)">还没有草稿。填好后点「保存」存到本机。</div>';return;}
+      d.forEach((item,i)=>{
+        const row=document.createElement('div');row.className='pp-draft';
+        const s=document.createElement('span');s.textContent=item.name||'(未命名)';s.title='点击载入';
+        s.addEventListener('click',()=>{
+          for(const k in F)if(el[k])el[k].value=item.data[k]||'';
+          if(item.model){
+            const tab=document.querySelector('#ppTabs .pp-tab[data-model="'+item.model+'"]');
+            if(tab)tab.click();
+          }
+          render();
+        });
+        const x=document.createElement('button');x.className='x';x.textContent='✕';x.title='删除';
+        x.addEventListener('click',()=>{const all=loadDrafts();all.splice(i,1);saveDrafts(all);renderDrafts();});
+        row.appendChild(s);row.appendChild(x);draftsEl.appendChild(row);
+      });
+    }
+    document.getElementById('ppSave').addEventListener('click',()=>{
+      const data={};for(const k in F)data[k]=val(k);
+      if(!data.subject){nameEl.focus();return;}
+      const d=loadDrafts();
+      d.unshift({name:(nameEl.value.trim()||data.subject.slice(0,24)),model,data});
+      saveDrafts(d.slice(0,30));nameEl.value='';renderDrafts();
+    });
+
+    renderDrafts();
+    render();
+  })();
 </script>
 </body>
 </html>
