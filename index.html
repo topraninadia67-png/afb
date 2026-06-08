@@ -1145,7 +1145,7 @@ highly detailed, 8k --ar 16:9 --style raw</pre>
 
     function hideAll(){
       [homeView,meView,practiceView,learnList].forEach(v=>{if(v)v.style.display='none';});
-      chapters.forEach(c=>c.el.style.display='none');
+      chapters.forEach(c=>{c.style.display='none';});
     }
     function setHeader(t){
       if(t){headerTitle.textContent=t;headerTitle.hidden=false;headerLogo.hidden=true;}
