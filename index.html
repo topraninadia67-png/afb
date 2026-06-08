@@ -242,27 +242,91 @@
   .pp-draft .x:hover{color:var(--bad)}
   .pp-copied{font-size:.82rem;color:var(--ok)}
   @media(max-width:760px){.pp-grid{grid-template-columns:1fr;gap:8px}}
+
+  /* ===== App Shell（多页面 + 底部 Tab） ===== */
+  .hero,.sidebar,.back-top,footer{display:none!important}
+  body{padding-bottom:calc(64px + env(safe-area-inset-bottom))}
+  .layout{display:block;max-width:var(--maxw);margin:0 auto}
+  .content{max-width:720px;margin:0 auto;padding:18px 18px 24px}
+  .app-view{animation:viewIn .28s ease}
+  @keyframes viewIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  /* app header */
+  .app-header .topbar-inner{gap:10px}
+  .app-title{font-weight:700;font-size:1.05rem;flex:1;text-align:center;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .app-header .logo{flex:1}
+  .hbtn{background:var(--bg-soft);border:1px solid var(--line);color:var(--text);
+    width:38px;height:38px;border-radius:10px;cursor:pointer;flex:none;font-size:22px;line-height:1;
+    display:grid;place-items:center}
+  .hbtn:hover{border-color:var(--brand)}
+  .install-btn{padding:8px 12px;font-size:.82rem}
+  /* 章节内容在详情页内顶部留白 */
+  .content>section[id]:not(.app-view){padding-top:4px}
+  /* 底部 Tab 栏 */
+  .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:60;display:flex;
+    background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(14px);
+    border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+  .tab{flex:1;background:none;border:none;cursor:pointer;color:var(--text-dim);
+    display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 0 8px;font-size:.7rem}
+  .tab .tic{font-size:1.3rem;line-height:1;filter:grayscale(.4);opacity:.7;transition:.2s}
+  .tab.active{color:var(--brand-2);font-weight:600}
+  .tab.active .tic{filter:none;opacity:1;transform:translateY(-1px)}
+  /* 首页 */
+  .home-hero{padding:8px 2px 4px}
+  .home-greet{color:var(--text-soft);font-size:.95rem;margin-bottom:6px}
+  .home-hero h1{font-size:1.9rem;line-height:1.25;letter-spacing:-.5px}
+  .home-hero p{color:var(--text-soft);margin-top:10px;font-size:.95rem}
+  .home-stats{display:flex;gap:10px;margin:18px 0 6px}
+  .home-stats>div{flex:1;background:var(--bg-card);border:1px solid var(--line);border-radius:12px;
+    padding:12px 6px;text-align:center}
+  .home-stats b{display:block;font-size:1.4rem;background:linear-gradient(135deg,var(--brand),var(--brand-3));
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .home-stats span{font-size:.74rem;color:var(--text-dim)}
+  .home-section-title{font-weight:700;font-size:1.05rem;margin:22px 0 12px}
+  .home-tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .tile{cursor:pointer;text-align:left;background:var(--bg-card);border:1px solid var(--line);
+    border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:3px;transition:.18s}
+  .tile:hover{border-color:var(--brand);transform:translateY(-2px);box-shadow:var(--shadow)}
+  .tile .ti{font-size:1.7rem}
+  .tile .tt{font-weight:700;margin-top:6px}
+  .tile .td{font-size:.78rem;color:var(--text-dim)}
+  .home-brief{cursor:pointer;margin-top:18px;border-radius:14px;padding:16px;
+    background:linear-gradient(135deg,rgba(124,92,255,.14),rgba(244,114,182,.14));border:1px solid var(--line)}
+  .home-brief .k{font-size:.78rem;color:var(--text-dim);margin-bottom:6px}
+  .home-brief .v{font-weight:600;line-height:1.5}
+  /* 学习列表 */
+  .learn-head{font-weight:700;font-size:1.05rem;margin:4px 0 14px;color:var(--text-soft)}
+  .chapter-list{display:flex;flex-direction:column;gap:10px}
+  .chapter-item{cursor:pointer;text-align:left;width:100%;background:var(--bg-card);border:1px solid var(--line);
+    border-radius:13px;padding:14px;display:flex;align-items:center;gap:13px;transition:.18s}
+  .chapter-item:hover{border-color:var(--brand);transform:translateX(2px)}
+  .chapter-item .ci{font-size:1.5rem;flex:none;width:30px;text-align:center}
+  .chapter-item .cm{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0}
+  .chapter-item .ct{font-weight:600}
+  .chapter-item .cs{font-size:.74rem;color:var(--text-dim)}
+  .chapter-item .ca{font-size:1.5rem;color:var(--text-dim);flex:none}
+  /* 我的 */
+  .me-list{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+  .me-row{display:flex;align-items:center;justify-content:space-between;gap:12px;
+    background:var(--bg-card);border:1px solid var(--line);border-radius:13px;padding:14px}
+  .me-l{display:flex;align-items:center;gap:13px;min-width:0}
+  .me-ic{font-size:1.4rem;flex:none}
+  .me-t{font-weight:600}
+  .me-s{font-size:.78rem;color:var(--text-dim)}
+  .me-hint{margin-top:16px;font-size:.84rem;color:var(--text-soft);line-height:1.6;
+    background:var(--bg-soft);border:1px solid var(--line);border-radius:12px;padding:14px}
+  @media(min-width:720px){.app-header .topbar-inner{max-width:720px}}
 </style>
 </head>
 <body>
 
 <!-- ===== Top bar ===== -->
-<header class="topbar">
+<header class="topbar app-header">
   <div class="topbar-inner">
-    <div class="logo"><span class="dot">🎨</span> AI 艺术创作 · 培训手册</div>
-    <button class="menu-btn" id="menuBtn" aria-label="菜单">☰</button>
-    <nav id="topnav">
-      <a href="#intro">概览</a>
-      <a href="#workflow">创作流程</a>
-      <a href="#reasoning">推理模型</a>
-      <a href="#image">图像模型</a>
-      <a href="#video">视频模型</a>
-      <a href="#agent">Agent</a>
-      <a href="#prompt">提示词</a>
-      <a href="#practice">练习器</a>
-      <a href="#ethics">合规</a>
-    </nav>
-    <button class="install-btn" id="installBtn" hidden>📲 安装到主屏</button>
+    <button class="hbtn back-btn" id="appBack" aria-label="返回" hidden>‹</button>
+    <div class="logo" id="appLogo"><span class="dot">🎨</span> AI 艺术手册</div>
+    <div class="app-title" id="appTitle" hidden></div>
+    <button class="install-btn" id="installBtn" hidden>📲 安装</button>
     <button class="theme-btn" id="themeBtn" aria-label="切换主题">🌙</button>
   </div>
 </header>
@@ -306,6 +370,42 @@
 
   <!-- Content -->
   <main class="content">
+
+    <!-- ===== 首页 视图 ===== -->
+    <section id="view-home" class="app-view">
+      <div class="home-hero">
+        <div class="home-greet" id="homeGreet">你好 👋</div>
+        <h1>AI 艺术创作<br>学习手册</h1>
+        <p>从选型到落地，系统掌握用 AI 模型做艺术创作的完整流程。</p>
+      </div>
+
+      <div class="home-stats">
+        <div><b>4</b><span>模型类别</span></div>
+        <div><b>20+</b><span>主流工具</span></div>
+        <div><b>5</b><span>阶段流程</span></div>
+      </div>
+
+      <div class="home-section-title">快速开始</div>
+      <div class="home-tiles">
+        <button class="tile" data-go="learn" type="button">
+          <span class="ti">📚</span><span class="tt">开始学习</span><span class="td">11 个章节</span>
+        </button>
+        <button class="tile" data-go="practice" type="button">
+          <span class="ti">✍️</span><span class="tt">提示词练习</span><span class="td">动手练 + 评分</span>
+        </button>
+        <button class="tile" data-chapter="compare" type="button">
+          <span class="ti">⚖️</span><span class="tt">选型速查</span><span class="td">该用哪个模型</span>
+        </button>
+        <button class="tile" data-chapter="cases" type="button">
+          <span class="ti">🎯</span><span class="tt">实战案例</span><span class="td">完整流程演示</span>
+        </button>
+      </div>
+
+      <div class="home-brief" id="homeBrief" data-go="practice">
+        <div class="k">🎯 今日命题 · 点击去练习</div>
+        <div class="v" id="homeBriefText">为一款主打"未来感+自然清新"的虚拟饮品，做一张产品概念海报。</div>
+      </div>
+    </section>
 
     <!-- 概览 -->
     <section id="intro" class="anchor-h">
@@ -942,10 +1042,39 @@ highly detailed, 8k --ar 16:9 --style raw</pre>
       </div>
     </section>
 
+    <!-- ===== 我的 视图 ===== -->
+    <section id="view-me" class="app-view">
+      <div class="me-list">
+        <div class="me-row">
+          <div class="me-l"><span class="me-ic">🌓</span><div><div class="me-t">深色 / 浅色主题</div><div class="me-s">切换界面外观</div></div></div>
+          <button class="pp-btn ghost" id="meTheme" type="button">切换</button>
+        </div>
+        <div class="me-row" id="meInstallRow" hidden>
+          <div class="me-l"><span class="me-ic">📲</span><div><div class="me-t">安装到主屏</div><div class="me-s">像 app 一样全屏打开、可离线</div></div></div>
+          <button class="pp-btn" id="meInstall" type="button">安装</button>
+        </div>
+        <div class="me-row">
+          <div class="me-l"><span class="me-ic">💾</span><div><div class="me-t">我的提示词草稿</div><div class="me-s" id="meDraftCount">0 条</div></div></div>
+          <button class="pp-btn ghost" data-go="practice" type="button">去练习</button>
+        </div>
+        <div class="me-row">
+          <div class="me-l"><span class="me-ic">📖</span><div><div class="me-t">关于</div><div class="me-s">AI 艺术创作手册 · v1.1</div></div></div>
+        </div>
+      </div>
+      <div class="me-hint">📱 iPhone 用户：用 Safari 打开 → 点底部「分享」→「添加到主屏幕」即可安装为 app。</div>
+    </section>
+
   </main>
 </div>
 
-<button class="back-top" id="backTop" aria-label="返回顶部">↑</button>
+<!-- ===== 底部 Tab 导航 ===== -->
+<nav class="tabbar" id="tabbar">
+  <button class="tab active" data-go="home" type="button"><span class="tic">🏠</span><span>首页</span></button>
+  <button class="tab" data-go="learn" type="button"><span class="tic">📚</span><span>学习</span></button>
+  <button class="tab" data-go="practice" type="button"><span class="tic">✍️</span><span>练习</span></button>
+  <button class="tab" data-go="me" type="button"><span class="tic">👤</span><span>我的</span></button>
+</nav>
+
 
 <footer>
   <div class="top">
@@ -967,31 +1096,92 @@ highly detailed, 8k --ar 16:9 --style raw</pre>
     localStorage.setItem('ai-art-theme',cur);
   });
 
-  // Mobile menu
-  const menuBtn=document.getElementById('menuBtn');
-  const topnav=document.getElementById('topnav');
-  menuBtn.addEventListener('click',()=>topnav.classList.toggle('open'));
-  topnav.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>topnav.classList.remove('open')));
+  // 问候语（按时间）
+  (function(){
+    const g=document.getElementById('homeGreet');
+    if(!g)return;
+    const h=new Date().getHours();
+    g.textContent=(h<6?'夜深了 🌙':h<12?'早上好 ☀️':h<18?'下午好 👋':'晚上好 🌆');
+  })();
 
-  // Back to top
-  const backTop=document.getElementById('backTop');
-  window.addEventListener('scroll',()=>{
-    backTop.classList.toggle('show',window.scrollY>500);
-  });
-  backTop.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+  // ===== App 路由（底部 Tab + 章节列表/详情） =====
+  (function(){
+    const content=document.querySelector('.content');
+    const allSections=[...content.querySelectorAll(':scope > section')];
+    const homeView=document.getElementById('view-home');
+    const meView=document.getElementById('view-me');
+    const practiceView=document.getElementById('practice');
+    const special=['view-home','view-me','practice'];
+    const chapters=allSections.filter(s=>s.id&&!special.includes(s.id));
 
-  // Sidebar active highlight
-  const links=document.querySelectorAll('.sidebar a');
-  const sections=[...links].map(a=>document.querySelector(a.getAttribute('href'))).filter(Boolean);
-  const obs=new IntersectionObserver(entries=>{
-    entries.forEach(e=>{
-      if(e.isIntersecting){
-        const id='#'+e.target.id;
-        links.forEach(l=>l.classList.toggle('active',l.getAttribute('href')===id));
-      }
+    const meta=chapters.map(s=>{
+      const h2=s.querySelector('h2');
+      const ic=h2&&h2.querySelector('.ic');
+      const tag=s.querySelector('.sec-tag');
+      let title=h2?h2.textContent.trim():s.id;
+      if(ic)title=title.replace(ic.textContent,'').trim();
+      return {id:s.id,el:s,title,icon:ic?ic.textContent.trim():'📄',tag:tag?tag.textContent.trim():''};
     });
-  },{rootMargin:'-40% 0px -55% 0px'});
-  sections.forEach(s=>obs.observe(s));
+
+    // 构建「学习」章节列表
+    const learnList=document.createElement('section');
+    learnList.id='view-learn';learnList.className='app-view';
+    learnList.innerHTML='<div class="learn-head">📚 学习 · 共 '+meta.length+' 章</div>';
+    const list=document.createElement('div');list.className='chapter-list';
+    meta.forEach(m=>{
+      const item=document.createElement('button');item.type='button';item.className='chapter-item';
+      item.innerHTML='<span class="ci">'+m.icon+'</span><span class="cm"><span class="ct">'+
+        m.title+'</span><span class="cs">'+m.tag+'</span></span><span class="ca">›</span>';
+      item.addEventListener('click',()=>openChapter(m.id));
+      list.appendChild(item);
+    });
+    learnList.appendChild(list);
+    content.appendChild(learnList);
+
+    const headerTitle=document.getElementById('appTitle');
+    const headerLogo=document.getElementById('appLogo');
+    const backBtn=document.getElementById('appBack');
+    const tabbar=document.getElementById('tabbar');
+
+    function hideAll(){
+      [homeView,meView,practiceView,learnList].forEach(v=>{if(v)v.style.display='none';});
+      chapters.forEach(c=>c.el.style.display='none');
+    }
+    function setHeader(t){
+      if(t){headerTitle.textContent=t;headerTitle.hidden=false;headerLogo.hidden=true;}
+      else{headerTitle.hidden=true;headerLogo.hidden=false;}
+    }
+    function setTab(n){tabbar.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.getAttribute('data-go')===n));}
+
+    function show(view){
+      hideAll();backBtn.hidden=true;
+      if(view==='home'){homeView.style.display='';setHeader('');setTab('home');}
+      else if(view==='learn'){learnList.style.display='';setHeader('学习');setTab('learn');}
+      else if(view==='practice'){practiceView.style.display='';setHeader('提示词练习器');setTab('practice');}
+      else if(view==='me'){meView.style.display='';setHeader('我的');setTab('me');}
+      window.scrollTo(0,0);
+    }
+    function openChapter(id){
+      const m=meta.find(x=>x.id===id);if(!m)return;
+      hideAll();m.el.style.display='';setHeader(m.title);setTab('learn');
+      backBtn.hidden=false;window.scrollTo(0,0);
+    }
+
+    backBtn.addEventListener('click',()=>show('learn'));
+    document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>show(b.getAttribute('data-go'))));
+    document.querySelectorAll('[data-chapter]').forEach(b=>b.addEventListener('click',()=>openChapter(b.getAttribute('data-chapter'))));
+
+    show('home');
+    window.__appShow=show;
+  })();
+
+  // 「我的」页：主题切换 + 草稿数
+  document.getElementById('meTheme').addEventListener('click',()=>themeBtn.click());
+  (function(){
+    const c=document.getElementById('meDraftCount');
+    if(!c)return;
+    try{c.textContent=(JSON.parse(localStorage.getItem('ai-art-prompt-drafts')||'[]').length)+' 条';}catch(e){}
+  })();
 
   // ===== PWA: service worker + install prompt =====
   if('serviceWorker' in navigator){
@@ -1001,23 +1191,28 @@ highly detailed, 8k --ar 16:9 --style raw</pre>
   }
   let deferredPrompt=null;
   const installBtn=document.getElementById('installBtn');
+  const meInstall=document.getElementById('meInstall');
+  const meInstallRow=document.getElementById('meInstallRow');
+  async function doInstall(){
+    if(!deferredPrompt)return;
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    deferredPrompt=null;
+    if(installBtn)installBtn.hidden=true;
+    if(meInstallRow)meInstallRow.hidden=true;
+  }
   window.addEventListener('beforeinstallprompt',(e)=>{
     e.preventDefault();
     deferredPrompt=e;
     if(installBtn)installBtn.hidden=false;
+    if(meInstallRow)meInstallRow.hidden=false;
   });
-  if(installBtn){
-    installBtn.addEventListener('click',async()=>{
-      if(!deferredPrompt)return;
-      deferredPrompt.prompt();
-      await deferredPrompt.userChoice;
-      deferredPrompt=null;
-      installBtn.hidden=true;
-    });
-  }
+  if(installBtn)installBtn.addEventListener('click',doInstall);
+  if(meInstall)meInstall.addEventListener('click',doInstall);
   window.addEventListener('appinstalled',()=>{
     deferredPrompt=null;
     if(installBtn)installBtn.hidden=true;
+    if(meInstallRow)meInstallRow.hidden=true;
   });
 
   // ===== 提示词练习器 =====

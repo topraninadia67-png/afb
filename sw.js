@@ -1,6 +1,6 @@
 /* Service worker for AI 艺术创作 · 培训手册 PWA
    Cache-first for the app shell so it works fully offline once installed. */
-const CACHE = 'ai-art-manual-v1';
+const CACHE = 'ai-art-manual-v2';
 const ASSETS = [
   './',
   './index.html',
