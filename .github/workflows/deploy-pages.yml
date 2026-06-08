@@ -2,7 +2,7 @@ name: Deploy PWA to GitHub Pages
 
 on:
   push:
-    branches: ["main", "claude/app-development-etihgh"]
+    branches: ["main", "claude/ecstatic-tesla-6MRM3", "claude/app-development-etihgh"]
   workflow_dispatch:
 
 # Allow the workflow to deploy to GitHub Pages
