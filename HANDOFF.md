@@ -1,7 +1,51 @@
 # 交接说明 / HANDOFF —— 给新会话的我
 
-> 这个文件是为「在网络放开后的新会话」准备的。新会话的我请**先完整读这个文件**，再继续。
+> 这个文件是为「新会话的我」准备的。新会话的我请**先完整读这个文件**，再继续。
 > 用户是三亚千古情艺术团的管理者，**非技术背景，明确表示"不想自己做"**——所有构建由 AI 通过飞书 CLI 自动完成，用户只做必要的授权确认。请全程用中文、耐心、给手机/网页可操作的指引。
+
+---
+
+## ⭐ 最新进度（2026-06-09 云端会话验证）—— 现已改为「本地 Claude Code」执行
+
+用户本地（Windows 电脑）的 Claude Code **已成功安装并可用**，因此最终方案改为
+**在用户本地的 Claude Code 里建表**，而不是云端。原因：App Secret 全程留在用户自己
+电脑上，永不进入任何云端聊天记录，最安全；且需要"用户身份授权扫码"时浏览器就在手边。
+
+**云端会话已替你验证好的事实（本地无需重复怀疑）：**
+- ✅ 飞书 CLI 包名 `@larksuite/cli`，安装后 bin 名为 **`lark-cli`**（注意不是 `lark`），当前版本 `1.0.49`。
+- ✅ 凭证配置命令：`lark-cli config init --app-id <id> --app-secret-stdin`
+  （`--app-secret-stdin` 从标准输入读 Secret，避免出现在进程列表/命令历史里）。
+  - 本环境 `OPENCLAW_HOME`/`HERMES_HOME` 为空 → **不是 Agent 受限上下文**，直接用 `config init` 即可，
+    无需 `config bind` 或 `--force-init`。本地若也非 Agent 上下文，同理。
+- ✅ `lark-cli base` 子命令齐全，建系统需要的全部能力都在，确切命令名：
+  - Base：`+base-create` / `+base-get` / `+base-copy`
+  - 表：`+table-create`（可同时建字段和视图）/ `+table-list` / `+table-get` / `+table-update` / `+table-delete`
+  - 字段：`+field-create` / `+field-list` / `+field-update` / `+field-delete`
+  - 视图：`+view-create` / `+view-set-filter` / `+view-set-visible-fields` / `+view-set-group` / `+view-set-sort` 等
+  - 表单：`+form-create` / `+form-questions-create` / `+form-update` / `+form-questions-list`
+  - 角色权限：`+role-create` / `+role-update` / `+role-list` / `+advperm-enable`（开高级权限）
+  - 自动化：`+workflow-create` / `+workflow-enable` / `+workflow-list`
+  - 记录：`+record-batch-create` / `+record-upsert` 等
+  - 通用兜底：`lark-cli api <METHOD> <path> --params/--data`，以及 `lark-cli schema <service.resource.method>` 查准确入参。
+- ⏳ 唯一未做：写入 App Secret（按方案故意留给本地，不在云端贴 Secret）。
+
+### 本地 Claude Code 执行指引（Windows）
+
+1. **拉最新代码**：`git pull origin claude/gifted-johnson-iyt81p`，先读本 HANDOFF。
+2. **确认 Node**：`node -v`（需 v18+，建议 v20/v22）。没有就去 nodejs.org 装 LTS。
+3. **装 CLI**：`npm install -g @larksuite/cli`，然后 `lark-cli --version` 确认。
+4. **配凭证（Secret 不要出现在命令行参数里！用 stdin）**：
+   - 让用户把重置后的新 App Secret 准备好（App ID 固定 `cli_a9094f4ff4791bd7`）。
+   - PowerShell：`"<新Secret>" | lark-cli config init --app-id cli_a9094f4ff4791bd7 --app-secret-stdin`
+   - 或直接 `lark-cli config init`（无参）进交互式 TUI，把 Secret 粘到输入框（更不易泄漏到命令历史）。
+   - **绝不把 Secret 写进任何文件 / 提交到 Git。**
+5. **验证身份**：`lark-cli doctor`（应能以 bot 身份拿到 tenant token，不再 403）。
+6. **用户身份授权（在用户云盘建 Base 时需要）**：
+   `lark-cli auth login --no-wait --json --domain base,im,docs` → 把设备码授权链接/二维码发给用户，
+   用户在飞书 App 里确认后，用 `--device-code` 收尾。若提示缺 scope，引导用户去开放平台「权限管理」开通对应权限（bitable/base、im 等）再重试。
+7. **依次建**：Base → 6 张表(见下) → 字段 → 视图 → 表单 → 角色/高级权限 → 自动化。
+   每个命令先 `lark-cli base <子命令> --help` 或 `lark-cli schema ...` 看准确入参再执行。
+8. 边建边用中文向用户说明进度和需要确认的点。
 
 ## 一句话目标
 用 **飞书 CLI（@larksuite/cli）** 在**用户自己的飞书**里，自动搭出「三亚千古情艺术团管理系统」的多维表格（Base）+ 表单 + 权限 + 自动化。功能对标本仓库已写好的微信小程序版（见 `miniprogram/` 与 `cloudfunctions/`，那是同一套需求的另一实现，可作为功能规格参考）。
@@ -27,7 +71,7 @@
 - **App ID**：`cli_a9094f4ff4791bd7`（正式应用，挂"三亚千古情旅游演艺有限公司"名下，已启用）
 - **App Secret**：⚠️ 旧的已在聊天中明文暴露，已请用户**重置**。新会话开始时**向用户索要新的 App Secret**，用 `lark-cli config init --app-id cli_a9094f4ff4791bd7 --app-secret-stdin` 经 stdin 写入，**切勿提交到 Git**。
 
-## 操作步骤（新会话执行）
+## 操作步骤（历史，云端版；本地版见上方「⭐ 最新进度」）
 1. 确认本环境网络可达飞书：`curl -sS -o /dev/null -w "%{http_code}" https://open.feishu.cn/`（不再是 "Host not in allowlist" 即可）。
 2. 装 CLI：`npm install -g @larksuite/cli`（bin 名为 `lark-cli`，PATH 可能在 /opt/node22/bin）。
 3. 配凭证（向用户要新 Secret，stdin 写入）。
