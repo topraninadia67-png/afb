@@ -5,7 +5,62 @@
 
 ---
 
-## ⭐ 最新进度（2026-06-09 云端会话验证）—— 现已改为「本地 Claude Code」执行
+## ✅✅ 建表已完成（2026-06-09 云端会话实际执行）—— 重要！先看这里
+
+**决策更新**：用户最终选择「**在云端（我）这里建**」，并直接在聊天里提供了 App Secret，
+已配置成功。用户**还额外想要一个"能聊天的 AI 助手"（飞书机器人）**——这是下一阶段(Phase 2)。
+
+### 已建成的多维表格（在用户「吴边」名下）
+- **Base 名**：千古情艺术团管理
+- **base_token**：`Lb8UbQuOdae9cHsiLvXcdBoqnye`
+- **打开地址**：https://tcnixq9o2xxw.feishu.cn/base/Lb8UbQuOdae9cHsiLvXcdBoqnye
+- **登录用户**：吴边（open_id `ou_e05e6b5274e5e74c8dd4877e589782bc`），lark-cli 已存 user 身份 token。
+- **App**：`cli_a9094f4ff4791bd7`；user 身份已授权全部 base/docs/drive/im scope。
+
+### 6 张表（table_id）
+| 表 | table_id | 字段 |
+|---|---|---|
+| 日常检查 | `tblQEN4agGzqWytE` | 日期(datetime)、团员(user)、检查区域(单选)、检查项明细(text)、异常数(number)、备注(text) |
+| 扣分记录 | `tbl91y9hda1x82jy` | 团员(user)、扣分值(number)、原因(text)、日期(date)、备注(text) |
+| 制度库 | `tblTWpDbswt7dhFz` | 标题、分类(单选)、正文、关键词 |
+| 题库 | `tblilYZGeNMWltTQ` | 题干、题型(单选/判断)、选项、正确答案、分类(单选)、分值 |
+| 考试成绩 | `tblfkB95n6XT6vJN` | 团员(user)、得分、答对题数、总题数、是否通过(单选)、考试时间 |
+| 匿名意见 | `tblzp2evMSDDJk7e` | 内容、类别(单选)、状态(单选)、提交时间 |
+（系统默认空白表已删除。）
+
+### 表单（form / view）
+- 「每日检查填报」表单：表 日常检查，form_id `vewZEbXyr7`
+- 「匿名意见箱」表单：表 匿名意见，form_id `vewCH0Jw4d`（通过分享链接提交默认匿名，不记录身份）
+
+### 视图（带筛选）
+- 日常检查 →「⚠️异常汇总」`vewrbfIJkt`：筛选 异常数 > 0
+- 匿名意见 →「📥待处理意见」`vewZ05Wjmg`：筛选 状态 == 待处理
+- 考试成绩 →「❌未通过名单」`vewhyVuekY`：筛选 是否通过 == 未通过
+
+### 权限（已开启高级权限 advperm）
+- 自定义角色「**普通团员**」role_id `rolR0eV34qH`：
+  - 制度库 = read_only（看全部）
+  - 题库 = no_perm（含答案，团员不可见）
+  - 日常检查 = no_perm（团员只通过表单提交，不看表）
+  - 扣分记录 = read_only **仅本人**（record_rule where 团员 is CurrentUser）
+  - 考试成绩 = read_only **仅本人**
+  - 匿名意见 = no_perm（团员只通过匿名表单提交）
+- **重要坑**：本 Base 套餐对「记录级(行级)权限规则」配额上限 = **2 条**。3 条会报 `row quota limit`。
+  故 日常检查 没用行规则，改为 no_perm + 表单提交。
+- 角色 JSON 必备字段（create/update 都要）：`role_name`,`role_type:"custom_role"`，每个表要
+  `perm`(manage/edit/read_only/no_perm)+`view_rule`(allow_edit,visibility)+`field_rule`(field_perm_mode: all_edit/all_read/specify)+`record_rule`(record_operations[]，本人规则再加 where.conditions[{field_name,operator:"is",value:["CurrentUser"]}])。
+- 管理员（吴边/Base 所有者）默认看全部，无需额外配置。
+- **待办**：把团员加为协作者并赋「普通团员」角色（需要知道团员的飞书账号；用户后续提供或自行在 Base「…→权限/协作者」里加）。
+
+### 尚未做 / 待办
+1. **自动化(workflow)**：新匿名意见提醒管理员 —— 跳过了，因 workflow steps schema 本地无 SSOT 文档、凭空写有风险。后续用 `+workflow-create`（需 `lark-base-workflow-schema.md`）或飞书 UI 配。
+2. **团员协作者赋角色**：见上。
+3. **Phase 2：飞书聊天 AI 助手**（用户明确想要）。建议路径：**扣子 Coze（coze.cn）零代码搭 bot → 发布到飞书**，用插件/API 读这个 Base；用户非技术，要一步步带。或用本 app 的 bot + 事件订阅自建（需常驻服务，门槛高，不推荐给该用户）。
+4. **安全**：App Secret 已在聊天明文出现（`hbIb…`），**用户用完应再次重置**。
+
+---
+
+## ⭐ 历史进度（2026-06-09 云端会话验证）—— 一度计划改为「本地 Claude Code」执行（后未采用）
 
 用户本地（Windows 电脑）的 Claude Code **已成功安装并可用**，因此最终方案改为
 **在用户本地的 Claude Code 里建表**，而不是云端。原因：App Secret 全程留在用户自己
